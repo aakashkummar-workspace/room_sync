@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+}
+
+body {
+  @apply bg-surface text-text-primary font-sans antialiased;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+@layer components {
+  .soft-card {
+    @apply bg-surface-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-card transition-all duration-300;
+  }
+
+  .soft-card:hover {
+    @apply shadow-elevated;
+  }
+
+  .pastel-card {
+    @apply rounded-2xl sm:rounded-3xl p-4 sm:p-5 transition-all duration-300;
+  }
+
+  .premium-button {
+    @apply px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 text-sm;
+  }
+
+  .premium-input {
+    @apply w-full bg-surface border border-surface-border rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 focus:outline-none focus:ring-2 focus:ring-text-primary/10 focus:border-text-primary/20 transition-all duration-300 text-text-primary placeholder:text-text-muted text-sm sm:text-base;
+  }
+
+  .avatar-group {
+    @apply flex -space-x-2;
+  }
+
+  .avatar-group > * {
+    @apply ring-2 ring-white;
+  }
+
+  .section-title {
+    @apply text-base sm:text-lg font-bold text-text-primary;
+  }
+
+  .section-subtitle {
+    @apply text-xs sm:text-sm text-text-secondary;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold;
+  }
+
+  /* Responsive page header */
+  .page-header {
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8;
+  }
+
+  .page-title {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary;
+  }
+
+  .page-subtitle {
+    @apply text-xs sm:text-sm text-text-muted mt-0.5 sm:mt-1;
+  }
+
+  /* Hide scrollbar for horizontal scroll containers */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Custom Scrollbar - Subtle (desktop only) */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-muted rounded-full hover:bg-text-light transition-colors;
+  }
+}
+
+/* Bottom nav safe area for mobile */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 767px) {
+  button, a, [role="button"] {
+    min-height: 40px;
+  }
+}
