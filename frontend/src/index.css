@@ -2,8 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== LIGHT THEME (default) ===== */
 :root {
   --font-inter: 'Inter', sans-serif;
+
+  /* Surfaces */
+  --surface: #FAFAFA;
+  --surface-card: #FFFFFF;
+  --surface-hover: #F5F5F5;
+  --surface-border: #F0F0F0;
+  --surface-muted: #E8E8E8;
+
+  /* Text */
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-light: #D1D5DB;
+
+  /* Accent */
+  --accent: #1A1A2E;
+  --accent-warm: #E8A87C;
+  --accent-coral: #E27D60;
+
+  /* Pastels */
+  --pastel-pink: #FFE4E8;
+  --pastel-pink-dark: #F4A5B8;
+  --pastel-green: #E8F5E9;
+  --pastel-green-dark: #81C784;
+  --pastel-mint: #E0F2F1;
+  --pastel-mint-dark: #80CBC4;
+  --pastel-peach: #FFF3E0;
+  --pastel-peach-dark: #FFB74D;
+  --pastel-lavender: #F3E5F5;
+  --pastel-lavender-dark: #CE93D8;
+  --pastel-blue: #E3F2FD;
+  --pastel-blue-dark: #90CAF9;
+  --pastel-cream: #FFF8E1;
+  --pastel-cream-dark: #FFD54F;
+
+  /* Shadows */
+  --shadow-soft: 0 2px 15px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== DARK THEME ===== */
+html.dark {
+  color-scheme: dark;
+
+  /* Surfaces - deep navy/charcoal */
+  --surface: #101014;
+  --surface-card: #1a1a22;
+  --surface-hover: #242430;
+  --surface-border: #2c2c3a;
+  --surface-muted: #38384a;
+
+  /* Text - bright and readable */
+  --text-primary: #EAEAF0;
+  --text-secondary: #A0A0B8;
+  --text-muted: #6E6E84;
+  --text-light: #4A4A5E;
+
+  /* Accent - soft teal for dark mode */
+  --accent: #EAEAF0;
+  --accent-warm: #E8A87C;
+  --accent-coral: #E27D60;
+
+  /* Pastels - rich muted tones that glow on dark */
+  --pastel-pink: rgba(244, 165, 184, 0.15);
+  --pastel-pink-dark: #F4A5B8;
+  --pastel-green: rgba(129, 199, 132, 0.15);
+  --pastel-green-dark: #81C784;
+  --pastel-mint: rgba(128, 203, 196, 0.15);
+  --pastel-mint-dark: #80CBC4;
+  --pastel-peach: rgba(255, 183, 77, 0.15);
+  --pastel-peach-dark: #FFB74D;
+  --pastel-lavender: rgba(206, 147, 216, 0.15);
+  --pastel-lavender-dark: #CE93D8;
+  --pastel-blue: rgba(144, 202, 249, 0.15);
+  --pastel-blue-dark: #90CAF9;
+  --pastel-cream: rgba(255, 213, 79, 0.15);
+  --pastel-cream-dark: #FFD54F;
+
+  /* Shadows - deeper for dark mode */
+  --shadow-soft: 0 2px 15px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 body {
@@ -18,6 +104,94 @@ body {
   input, select, textarea {
     font-size: 16px !important;
   }
+}
+
+/* Dark mode - extra overrides for non-token classes */
+html.dark .bg-white {
+  background-color: var(--surface-card);
+}
+
+html.dark .bg-white\/50,
+html.dark .bg-white\/60 {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .ring-white {
+  --tw-ring-color: var(--surface-card);
+}
+
+html.dark .border-red-100 {
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+html.dark .bg-red-50,
+html.dark .hover\:bg-red-50:hover,
+html.dark .hover\:\!bg-red-50:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+html.dark .bg-green-50 {
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+html.dark .bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
+html.dark .bg-green-100 {
+  background-color: rgba(34, 197, 94, 0.15);
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: var(--surface);
+  border-color: var(--surface-border);
+  color: var(--text-primary);
+}
+
+/* Dark mode SVG circle for efficiency chart */
+html.dark circle[stroke="#F0F0F0"] {
+  stroke: var(--surface-muted);
+}
+
+html.dark circle[stroke="#1A1A2E"] {
+  stroke: #818cf8;
+}
+
+/* Dark mode sticky notes - keep them vibrant */
+html.dark .bg-surface-card\/80 {
+  background-color: rgba(26, 26, 34, 0.85);
+}
+
+/* Dark mode - bg-text-primary is used as accent bg for nav/buttons.
+   Keep it a rich teal-blue so white text stays readable on it. */
+html.dark .bg-text-primary {
+  background-color: #1e6f8e;
+}
+
+html.dark .hover\:bg-text-primary\/90:hover {
+  background-color: rgba(30, 111, 142, 0.9);
+}
+
+html.dark .bg-text-primary\/5 {
+  background-color: rgba(30, 111, 142, 0.08);
+}
+
+/* Dark mode - logout hover */
+html.dark .hover\:bg-red-50:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Dark mode search bar */
+html.dark .focus-within\:ring-text-primary\/10 {
+  --tw-ring-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode - efficiency chart stroke */
+html.dark .stroke-text-primary,
+html.dark [stroke="var(--text-primary)"] {
+  stroke: #1e6f8e;
 }
 
 @layer components {
@@ -38,7 +212,20 @@ body {
   }
 
   .premium-input {
-    @apply w-full bg-surface border border-surface-border rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 focus:outline-none focus:ring-2 focus:ring-text-primary/10 focus:border-text-primary/20 transition-all duration-300 text-text-primary placeholder:text-text-muted text-sm sm:text-base;
+    @apply w-full bg-surface border border-surface-border rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 focus:outline-none focus:ring-2 transition-all duration-300 text-text-primary placeholder:text-text-muted text-sm sm:text-base;
+    --tw-ring-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .premium-input:focus {
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  html.dark .premium-input {
+    --tw-ring-color: rgba(255, 255, 255, 0.1);
+  }
+
+  html.dark .premium-input:focus {
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .avatar-group {
@@ -91,11 +278,16 @@ body {
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-surface-muted rounded-full hover:bg-text-light transition-colors;
+    background-color: var(--surface-muted);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-light);
   }
 }
 

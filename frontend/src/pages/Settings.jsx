@@ -4,14 +4,14 @@ import { User, Home, Bell, ChevronRight, Camera, Globe, Moon, Check, CreditCard,
 import { TechCard } from '../components/TechCard';
 import { Button } from '../components/Button';
 import { useAuth } from '../hooks/useAuth';
+import { useSettings } from '../hooks/useSettings';
 import { dashboardService } from '../services/dashboard';
 
 export const Settings = () => {
     const { logout, user } = useAuth();
+    const { darkMode, notifications: emailNotifications, language, toggleDarkMode, toggleNotifications, setLanguage } = useSettings();
     const [dashboardData, setDashboardData] = useState(null);
-    const [emailNotifications, setEmailNotifications] = useState(true);
-    const [darkMode, setDarkMode] = useState(false);
-    const [language] = useState('English');
+    const [showLangMenu, setShowLangMenu] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -81,8 +81,8 @@ export const Settings = () => {
                         <h4 className="text-[10px] sm:text-xs font-semibold text-text-muted mb-4 sm:mb-6">Preferences</h4>
                         <div className="space-y-4 sm:space-y-5">
                             {[
-                                { label: 'Notifications', icon: Bell, active: emailNotifications, toggle: () => setEmailNotifications(!emailNotifications) },
-                                { label: 'Dark Mode', icon: Moon, active: darkMode, toggle: () => setDarkMode(!darkMode) },
+                                { label: 'Notifications', icon: Bell, active: emailNotifications, toggle: toggleNotifications },
+                                { label: 'Dark Mode', icon: Moon, active: darkMode, toggle: toggleDarkMode },
                             ].map((pref, i) => (
                                 <div key={i} className="flex items-center justify-between">
                                     <div className="flex items-center gap-2 sm:gap-3">
@@ -98,14 +98,28 @@ export const Settings = () => {
                                     </button>
                                 </div>
                             ))}
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between relative">
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-surface border border-surface-border">
                                         <Globe size={14} className="text-text-light" />
                                     </div>
                                     <span className="text-xs sm:text-sm font-medium text-text-secondary">Language</span>
                                 </div>
-                                <span className="text-xs sm:text-sm font-medium text-text-primary cursor-pointer hover:underline">{language}</span>
+                                <div className="relative">
+                                    <button onClick={() => setShowLangMenu(!showLangMenu)} className="text-xs sm:text-sm font-medium text-text-primary cursor-pointer hover:underline">
+                                        {language}
+                                    </button>
+                                    {showLangMenu && (
+                                        <div className="absolute right-0 top-full mt-2 bg-surface-card border border-surface-border rounded-xl shadow-elevated z-50 py-1 min-w-[120px]">
+                                            {['English', 'Hindi', 'Telugu', 'Tamil', 'Kannada'].map(lang => (
+                                                <button key={lang} onClick={() => { setLanguage(lang); setShowLangMenu(false); }}
+                                                    className={`w-full text-left px-4 py-2 text-xs sm:text-sm hover:bg-surface-hover transition-colors ${language === lang ? 'font-bold text-text-primary' : 'text-text-secondary'}`}>
+                                                    {lang}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </TechCard>

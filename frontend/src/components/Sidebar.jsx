@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Home, Wallet, CheckSquare, Package, PieChart, Bell, Settings, LogOut, Users } from 'lucide-react';
+import { Home, Wallet, CheckSquare, Package, PieChart, Bell, Settings, LogOut, Users, MessageCircle } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -41,13 +41,14 @@ export const Sidebar = () => {
         { icon: Package, label: 'Inventory', path: '/inventory' },
         { icon: Users, label: 'Roommates', path: '/roommates' },
         { icon: PieChart, label: 'Analytics', path: '/analytics' },
+        { icon: MessageCircle, label: 'Messages', path: '/messages' },
     ];
 
     const bottomNavItems = [
         { icon: Home, label: 'Home', path: '/' },
         { icon: Wallet, label: 'Expenses', path: '/expenses' },
+        { icon: MessageCircle, label: 'Messages', path: '/messages' },
         { icon: CheckSquare, label: 'Chores', path: '/chores' },
-        { icon: Package, label: 'Inventory', path: '/inventory' },
         { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 

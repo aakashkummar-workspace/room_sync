@@ -4,6 +4,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import { SettingsProvider } from './hooks/useSettings';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -18,34 +19,38 @@ import { Roommates } from './pages/Roommates';
 import { Analytics } from './pages/Analytics';
 import { Notices } from './pages/Notices';
 import { Settings } from './pages/Settings';
+import { Messages } from './pages/Messages';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/*"
-            element={
-              <ProtectedRoute>
-                <MainLayout>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/expenses" element={<Expenses />} />
-                    <Route path="/chores" element={<Chores />} />
-                    <Route path="/inventory" element={<Inventory />} />
-                    <Route path="/roommates" element={<Roommates />} />
-                    <Route path="/analytics" element={<Analytics />} />
-                    <Route path="/notices" element={<Notices />} />
-                    <Route path="/settings" element={<Settings />} />
-                  </Routes>
-                </MainLayout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
+      <SettingsProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <MainLayout>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/expenses" element={<Expenses />} />
+                      <Route path="/chores" element={<Chores />} />
+                      <Route path="/inventory" element={<Inventory />} />
+                      <Route path="/roommates" element={<Roommates />} />
+                      <Route path="/analytics" element={<Analytics />} />
+                      <Route path="/notices" element={<Notices />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/messages" element={<Messages />} />
+                    </Routes>
+                  </MainLayout>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Router>
+      </SettingsProvider>
     </AuthProvider>
   );
 }

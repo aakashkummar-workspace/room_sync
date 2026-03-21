@@ -47,13 +47,17 @@ export const AuthProvider = ({ children }) => {
         return userData;
     };
 
+    const signup = async (userData) => {
+        await authService.signup(userData);
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, googleLogin, facebookLogin, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, signup, googleLogin, facebookLogin, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

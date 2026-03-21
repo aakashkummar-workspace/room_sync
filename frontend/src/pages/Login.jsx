@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 
 export const Login = () => {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState('login');
     const [socialLoading, setSocialLoading] = useState('');
-    const { login, googleLogin, facebookLogin } = useAuth();
+    const { login, googleLogin, facebookLogin, signup } = useAuth();
     const navigate = useNavigate();
 
     const facebookAppId = import.meta.env.VITE_FACEBOOK_APP_ID || '';
@@ -19,8 +20,21 @@ export const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        try { await login(email, password); navigate('/'); }
-        catch (err) { setError('Invalid email or password. Please try again.'); }
+        try {
+            if (activeTab === 'signup') {
+                if (!name.trim()) { setError('Please enter your name.'); return; }
+                await signup({ name: name.trim(), email, password });
+            }
+            await login(email, password);
+            navigate('/');
+        } catch (err) {
+            if (activeTab === 'signup') {
+                const msg = err?.response?.data?.detail || 'Signup failed. Email may already be registered.';
+                setError(msg);
+            } else {
+                setError('Invalid email or password. Please try again.');
+            }
+        }
     };
 
     // --- Google Login ---
@@ -152,8 +166,8 @@ export const Login = () => {
                         {activeTab === 'signup' && (
                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="relative">
                                 <User className="absolute left-0 top-1/2 -translate-y-1/2 text-text-light" size={20} />
-                                <input type="text" placeholder="Full Name"
-                                    className="w-full pl-8 pr-4 py-3 border-b-2 border-surface-border focus:border-text-primary outline-none text-sm text-text-primary placeholder:text-text-muted transition-colors bg-transparent" />
+                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full Name"
+                                    className="w-full pl-8 pr-4 py-3 border-b-2 border-surface-border focus:border-text-primary outline-none text-sm text-text-primary placeholder:text-text-muted transition-colors bg-transparent" required />
                             </motion.div>
                         )}
 
