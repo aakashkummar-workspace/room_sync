@@ -12,5 +12,9 @@ export const roomService = {
     joinRoom: async (inviteCode) => {
         const response = await api.post(`/rooms/join/${inviteCode}`);
         return response.data;
+    },
+    getMemberCredentials: async (roomId) => {
+        const response = await api.get(`/rooms/${roomId}/credentials`);
+        return response.data;
     }
 };

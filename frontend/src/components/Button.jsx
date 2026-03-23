@@ -38,7 +38,7 @@ export const Button = ({
                 className
             )}
         >
-            {Icon && <Icon size={18} />}
+            {Icon && <Icon size={16} className="sm:w-[18px] sm:h-[18px]" />}
             {children}
         </motion.button>
     );

@@ -17,9 +17,11 @@ class UserCreate(UserBase):
 # Properties to receive via API on update
 class UserUpdate(UserBase):
     password: Optional[str] = None
+    avatar_url: Optional[str] = None
 
 class UserInDBBase(UserBase):
     id: Optional[int] = None
+    avatar_url: Optional[str] = None
     created_at: Optional[datetime] = None
 
     class Config:

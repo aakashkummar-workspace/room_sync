@@ -62,8 +62,8 @@ export const Notices = () => {
             </div>
 
             {/* Content */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6">
-                <div className="xl:col-span-8 space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6">
+                <div className="lg:col-span-8 space-y-3 sm:space-y-4">
                     <AnimatePresence mode="wait">
                         {activeTab === 'announcements' ? (
                             <motion.div key="announcements" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="space-y-3 sm:space-y-4">
@@ -137,7 +137,7 @@ export const Notices = () => {
                 </div>
 
                 {/* Sidebar */}
-                <div className="xl:col-span-4 space-y-4 sm:space-y-6">
+                <div className="lg:col-span-4 space-y-3 sm:space-y-6">
                     <h3 className="font-bold text-text-primary text-sm sm:text-base">Reminders</h3>
                     <TechCard delay={0.5} className="!p-4 sm:!p-5">
                         <div className="space-y-3 sm:space-y-5">

@@ -51,13 +51,25 @@ export const AuthProvider = ({ children }) => {
         await authService.signup(userData);
     };
 
+    const updateProfile = async (data) => {
+        const updated = await authService.updateProfile(data);
+        setUser(updated);
+        return updated;
+    };
+
+    const updateAvatar = async (file) => {
+        const result = await authService.uploadAvatar(file);
+        setUser(prev => ({ ...prev, avatar_url: result.avatar_url }));
+        return result;
+    };
+
     const logout = () => {
         localStorage.removeItem('token');
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, signup, googleLogin, facebookLogin, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, signup, googleLogin, facebookLogin, logout, loading, updateProfile, updateAvatar }}>
             {children}
         </AuthContext.Provider>
     );

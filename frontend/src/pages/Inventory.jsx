@@ -51,32 +51,32 @@ export const Inventory = () => {
             </div>
 
             {/* Colorful Stat Cards */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-5 sm:mb-8">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                    className="bg-pastel-blue rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-soft">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/60 rounded-xl sm:rounded-2xl flex items-center justify-center">
-                            <Package size={18} className="text-blue-600" />
+                    className="bg-pastel-blue rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-soft">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3">
+                        <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white/60 rounded-lg sm:rounded-2xl flex items-center justify-center">
+                            <Package size={14} className="sm:w-[18px] sm:h-[18px] text-blue-600" />
                         </div>
-                        <div><p className="text-[10px] sm:text-xs text-blue-700/60 font-medium">Total</p><h3 className="text-2xl sm:text-3xl font-bold text-blue-800">{items.length}</h3></div>
+                        <div><p className="text-[9px] sm:text-xs text-blue-700/60 font-medium">Total</p><h3 className="text-xl sm:text-3xl font-bold text-blue-800">{items.length}</h3></div>
                     </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-                    className="bg-pastel-peach rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-soft">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/60 rounded-xl sm:rounded-2xl flex items-center justify-center">
-                            <AlertTriangle size={18} className="text-orange-500" />
+                    className="bg-pastel-peach rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-soft">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3">
+                        <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white/60 rounded-lg sm:rounded-2xl flex items-center justify-center">
+                            <AlertTriangle size={14} className="sm:w-[18px] sm:h-[18px] text-orange-500" />
                         </div>
-                        <div><p className="text-[10px] sm:text-xs text-orange-700/60 font-medium">Low</p><h3 className="text-2xl sm:text-3xl font-bold text-orange-700">{lowStock.length}</h3></div>
+                        <div><p className="text-[9px] sm:text-xs text-orange-700/60 font-medium">Low</p><h3 className="text-xl sm:text-3xl font-bold text-orange-700">{lowStock.length}</h3></div>
                     </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                    className="bg-pastel-pink rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-soft">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/60 rounded-xl sm:rounded-2xl flex items-center justify-center">
-                            <ShoppingCart size={18} className="text-red-400" />
+                    className="bg-pastel-pink rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-soft">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3">
+                        <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white/60 rounded-lg sm:rounded-2xl flex items-center justify-center">
+                            <ShoppingCart size={14} className="sm:w-[18px] sm:h-[18px] text-red-400" />
                         </div>
-                        <div><p className="text-[10px] sm:text-xs text-red-700/60 font-medium">Out</p><h3 className="text-2xl sm:text-3xl font-bold text-red-500">{outOfStock.length}</h3></div>
+                        <div><p className="text-[9px] sm:text-xs text-red-700/60 font-medium">Out</p><h3 className="text-xl sm:text-3xl font-bold text-red-500">{outOfStock.length}</h3></div>
                     </div>
                 </motion.div>
             </div>
@@ -113,10 +113,10 @@ export const Inventory = () => {
                                 <span className="text-[10px] sm:text-xs text-text-secondary/60">Qty</span>
                                 <div className="flex items-center gap-2 sm:gap-3">
                                     <button onClick={(e) => { e.stopPropagation(); updateQuantity(item.id, Math.max(0, item.quantity - 1)); }}
-                                        className="w-8 h-8 rounded-lg bg-white/60 flex items-center justify-center font-bold text-xs text-text-secondary hover:bg-white transition-all">-</button>
+                                        className="w-9 h-9 sm:w-8 sm:h-8 rounded-lg bg-white/60 flex items-center justify-center font-bold text-sm sm:text-xs text-text-secondary hover:bg-white transition-all active:scale-90">-</button>
                                     <span className={`text-xl font-bold ${isOut ? 'text-red-500' : isLow ? 'text-orange-600' : 'text-green-700'}`}>{item.quantity}</span>
                                     <button onClick={(e) => { e.stopPropagation(); updateQuantity(item.id, item.quantity + 1); }}
-                                        className="w-8 h-8 rounded-lg bg-white/60 flex items-center justify-center font-bold text-xs text-text-secondary hover:bg-white transition-all">+</button>
+                                        className="w-9 h-9 sm:w-8 sm:h-8 rounded-lg bg-white/60 flex items-center justify-center font-bold text-sm sm:text-xs text-text-secondary hover:bg-white transition-all active:scale-90">+</button>
                                 </div>
                             </div>
 

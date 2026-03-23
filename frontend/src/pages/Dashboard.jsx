@@ -105,35 +105,60 @@ export const Dashboard = () => {
 
     return (
         <div className="max-w-6xl mx-auto">
+            {/* Tagline Banner */}
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="mb-4 sm:mb-6 relative overflow-hidden rounded-2xl sm:rounded-3xl bg-text-primary p-4 sm:p-5"
+            >
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-20 sm:h-20 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+                <div className="absolute top-1/2 right-1/4 w-2 h-2 bg-white/10 rounded-full" />
+
+                <div className="relative flex items-center gap-3 sm:gap-4">
+                    <div className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                        <Zap size={16} className="sm:w-5 sm:h-5 text-white/70" />
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[11px] sm:text-sm font-medium text-white/90 leading-relaxed">
+                            "Built for the way roommates actually live."
+                        </p>
+                        <p className="text-[9px] sm:text-xs text-white/40 mt-0.5">CasaSync — Smart Hostel Automation</p>
+                    </div>
+                </div>
+            </motion.div>
+
             {/* Greeting */}
-            <div className="flex items-start sm:items-center justify-between mb-5 sm:mb-8 gap-3">
+            <div className="flex items-start sm:items-center justify-between mb-4 sm:mb-8 gap-2">
                 <motion.div initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary">Hi {firstName}</h2>
-                    <p className="text-xs sm:text-sm text-text-muted mt-0.5 sm:mt-1">{pendingCount} tasks pending</p>
+                    <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-text-primary">Hi {firstName}</h2>
+                    <p className="text-[10px] sm:text-sm text-text-muted mt-0.5">{pendingCount} tasks pending</p>
                 </motion.div>
-                <div className="flex gap-2 shrink-0">
-                    <Button variant="secondary" icon={Plus} onClick={() => setIsExpenseModalOpen(true)} className="!px-2.5 sm:!px-4 text-xs">
+                <div className="flex gap-1.5 sm:gap-2 shrink-0">
+                    <Button variant="secondary" icon={Plus} onClick={() => setIsExpenseModalOpen(true)} className="!px-2 sm:!px-4 !py-1.5 sm:!py-2.5 text-[10px] sm:text-xs">
                         <span className="hidden sm:inline">Expense</span>
                     </Button>
-                    <Button variant="primary" icon={Plus} onClick={() => setIsChoreModalOpen(true)} className="!px-2.5 sm:!px-4 text-xs">
+                    <Button variant="primary" icon={Plus} onClick={() => setIsChoreModalOpen(true)} className="!px-2 sm:!px-4 !py-1.5 sm:!py-2.5 text-[10px] sm:text-xs">
                         <span className="hidden sm:inline">Task</span>
                     </Button>
                 </div>
             </div>
 
             {/* Categories — click navigates to page */}
-            <div className="mb-5 sm:mb-8">
-                <h3 className="font-bold text-text-primary text-sm sm:text-base mb-3 sm:mb-4">Categories</h3>
-                <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
+            <div className="mb-4 sm:mb-8">
+                <h3 className="font-bold text-text-primary text-xs sm:text-base mb-2 sm:mb-4">Categories</h3>
+                <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-1.5 scrollbar-hide -mx-2.5 px-2.5 sm:mx-0 sm:px-0">
                     {categoryConfig.map((cat, idx) => (
                         <motion.div key={idx} whileHover={{ y: -3 }} whileTap={{ scale: 0.97 }}
                             onClick={() => navigate(cat.path)}
-                            className={`${cat.color} rounded-2xl sm:rounded-3xl p-4 sm:p-5 cursor-pointer transition-all min-w-[120px] sm:min-w-[150px] flex-shrink-0 hover:shadow-card`}>
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/50 rounded-xl sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4">
-                                <cat.icon size={18} className={cat.iconColor} />
+                            className={`${cat.color} rounded-xl sm:rounded-3xl p-3 sm:p-5 cursor-pointer transition-all min-w-[100px] sm:min-w-[150px] flex-shrink-0 hover:shadow-card`}>
+                            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white/50 rounded-lg sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-4">
+                                <cat.icon size={16} className={`sm:w-[18px] sm:h-[18px] ${cat.iconColor}`} />
                             </div>
-                            <h4 className="font-bold text-text-primary text-xs sm:text-sm">{cat.label}</h4>
-                            <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5 sm:mt-1">
+                            <h4 className="font-bold text-text-primary text-[11px] sm:text-sm">{cat.label}</h4>
+                            <p className="text-[9px] sm:text-xs text-text-secondary mt-0.5">
                                 {data.stats?.[idx]?.value || '0'} Items
                             </p>
                         </motion.div>
@@ -145,7 +170,7 @@ export const Dashboard = () => {
             {data.room_id && <StickyNotes roomId={data.room_id} />}
 
             {/* Stats Grid — click opens detail */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
                 {data.stats.map((stat, idx) => (
                     <TechCard key={idx} delay={idx * 0.08}>
                         <StatCard {...stat} colorIndex={idx} onClick={() => setSelectedStat(stat)} />
@@ -154,14 +179,14 @@ export const Dashboard = () => {
             </div>
 
             {/* Main Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6">
                 {/* Activity Stream — click opens detail */}
                 <div className="lg:col-span-8 space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
                         <h3 className="font-bold text-text-primary text-sm sm:text-base">Ongoing tasks</h3>
                         <button className="text-[10px] sm:text-xs font-semibold text-text-muted hover:text-text-primary transition-colors">See all</button>
                     </div>
-                    <TechCard delay={0.3} className="min-h-[300px] sm:min-h-[400px] !p-3 sm:!p-4">
+                    <TechCard delay={0.3} className="min-h-[200px] sm:min-h-[400px] !p-2 sm:!p-4">
                         <div className="space-y-0.5 sm:space-y-1">
                             {data.recent_activity.length > 0 ? (
                                 data.recent_activity.map((activity, idx) => (

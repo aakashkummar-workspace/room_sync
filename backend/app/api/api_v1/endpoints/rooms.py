@@ -141,8 +141,13 @@ def invite_member(
     db.commit()
     db.refresh(new_user)
 
-    # Add to room
-    member = RoomMemberModel(room_id=room_id, user_id=new_user.id, role=RoleEnum.MEMBER)
+    # Add to room — store generated password so admin can view later
+    member = RoomMemberModel(
+        room_id=room_id,
+        user_id=new_user.id,
+        role=RoleEnum.MEMBER,
+        generated_password=generated_password,
+    )
     db.add(member)
     db.commit()
 
@@ -186,6 +191,47 @@ def remove_member(
     db.delete(membership)
     db.commit()
     return {"ok": True, "message": f"Member {user_id} removed from room"}
+
+
+from typing import Optional
+
+class MemberCredential(BaseModel):
+    user_id: int
+    name: str
+    email: str
+    password: Optional[str] = None
+
+
+@router.get("/{room_id}/credentials")
+def get_member_credentials(
+    room_id: int,
+    current_user: User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    """Admin-only: get login credentials for invited members."""
+    admin_membership = db.query(RoomMemberModel).filter(
+        RoomMemberModel.room_id == room_id,
+        RoomMemberModel.user_id == current_user.id,
+        RoomMemberModel.role == RoleEnum.ADMIN,
+    ).first()
+    if not admin_membership:
+        raise HTTPException(status_code=403, detail="Only admins can view credentials")
+
+    memberships = db.query(RoomMemberModel).filter(
+        RoomMemberModel.room_id == room_id,
+    ).all()
+
+    result = []
+    for m in memberships:
+        user = db.query(User).filter(User.id == m.user_id).first()
+        if user:
+            result.append(MemberCredential(
+                user_id=user.id,
+                name=user.name,
+                email=user.email,
+                password=m.generated_password,
+            ))
+    return result
 
 
 @router.get("/{room_id}", response_model=Room)

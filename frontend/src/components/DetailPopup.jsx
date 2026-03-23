@@ -21,7 +21,7 @@ export const DetailPopup = ({ isOpen, onClose, title, children, color = 'bg-whit
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 50, scale: 0.95 }}
                         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className={`relative w-full max-w-md ${color} rounded-t-3xl sm:rounded-3xl shadow-elevated overflow-hidden z-10 max-h-[85vh] overflow-y-auto`}
+                        className={`relative w-full max-w-md ${color} rounded-t-3xl sm:rounded-3xl shadow-elevated overflow-hidden z-10 max-h-[90vh] sm:max-h-[85vh] overflow-y-auto`}
                     >
                         <div className="w-12 h-1 bg-surface-muted rounded-full mx-auto mt-3 sm:hidden" />
 

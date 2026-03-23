@@ -141,14 +141,14 @@ export const Login = () => {
             {/* Main Card */}
             <motion.div initial={{ opacity: 0, y: 30, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="w-full max-w-md mx-4 sm:mx-0 relative z-10 sm:ml-[10%] md:ml-[15%] lg:ml-[20%]">
-                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                className="w-full max-w-md mx-3 sm:mx-0 relative z-10 sm:ml-[10%] md:ml-[15%] lg:ml-[20%]">
+                <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
                     {/* Avatar */}
-                    <div className="flex flex-col items-center pt-8 pb-4">
-                        <div className="w-20 h-20 rounded-full bg-text-primary flex items-center justify-center shadow-lg mb-3">
-                            <User size={36} className="text-white" />
+                    <div className="flex flex-col items-center pt-6 sm:pt-8 pb-3 sm:pb-4">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-text-primary flex items-center justify-center shadow-lg mb-2 sm:mb-3">
+                            <User size={28} className="sm:w-9 sm:h-9 text-white" />
                         </div>
-                        <h2 className="text-xl font-bold tracking-wide text-text-primary">
+                        <h2 className="text-lg sm:text-xl font-bold tracking-wide text-text-primary">
                             {activeTab === 'login' ? 'LOGIN' : 'SIGN UP'}
                         </h2>
                     </div>
@@ -162,7 +162,7 @@ export const Login = () => {
                     </div>
 
                     {/* Form */}
-                    <form onSubmit={handleSubmit} className="px-8 pb-6 space-y-5">
+                    <form onSubmit={handleSubmit} className="px-5 sm:px-8 pb-5 sm:pb-6 space-y-4 sm:space-y-5">
                         {activeTab === 'signup' && (
                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="relative">
                                 <User className="absolute left-0 top-1/2 -translate-y-1/2 text-text-light" size={20} />
@@ -200,7 +200,7 @@ export const Login = () => {
                     </form>
 
                     {/* Social Login */}
-                    <div className="px-8 pb-8">
+                    <div className="px-5 sm:px-8 pb-6 sm:pb-8">
                         <div className="flex items-center gap-4 mb-5">
                             <div className="flex-1 h-px bg-surface-border" />
                             <span className="text-xs text-text-muted font-medium">Or Login With</span>

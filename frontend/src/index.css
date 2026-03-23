@@ -208,11 +208,11 @@ html.dark [stroke="var(--text-primary)"] {
   }
 
   .premium-button {
-    @apply px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 text-sm;
+    @apply px-3 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-semibold transition-all duration-300 active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm;
   }
 
   .premium-input {
-    @apply w-full bg-surface border border-surface-border rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-3.5 focus:outline-none focus:ring-2 transition-all duration-300 text-text-primary placeholder:text-text-muted text-sm sm:text-base;
+    @apply w-full bg-surface border border-surface-border rounded-xl sm:rounded-2xl px-3.5 sm:px-5 py-2.5 sm:py-3.5 focus:outline-none focus:ring-2 transition-all duration-300 text-text-primary placeholder:text-text-muted text-sm;
     --tw-ring-color: rgba(0, 0, 0, 0.1);
   }
 
@@ -250,15 +250,15 @@ html.dark [stroke="var(--text-primary)"] {
 
   /* Responsive page header */
   .page-header {
-    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8;
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-8;
   }
 
   .page-title {
-    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary;
+    @apply text-lg sm:text-2xl lg:text-3xl font-bold text-text-primary;
   }
 
   .page-subtitle {
-    @apply text-xs sm:text-sm text-text-muted mt-0.5 sm:mt-1;
+    @apply text-[10px] sm:text-sm text-text-muted mt-0.5;
   }
 
   /* Hide scrollbar for horizontal scroll containers */
@@ -298,9 +298,16 @@ html.dark [stroke="var(--text-primary)"] {
   }
 }
 
+/* Content safe area for bottom nav */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .content-safe {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+}
+
 /* Touch-friendly tap targets */
 @media (max-width: 767px) {
-  button, a, [role="button"] {
-    min-height: 40px;
+  button:not(.inline-btn):not(.compact-btn), a:not(.inline-link) {
+    min-height: 36px;
   }
 }

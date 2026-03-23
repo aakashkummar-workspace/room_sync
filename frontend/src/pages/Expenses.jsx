@@ -59,51 +59,51 @@ export const Expenses = () => {
             </div>
 
             {/* Pastel Stat Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-5 sm:mb-8">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                    className="bg-pastel-blue rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-soft cursor-pointer hover:shadow-card transition-all"
+                    className="bg-pastel-blue rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-soft cursor-pointer hover:shadow-card transition-all"
                     onClick={() => setSelectedExpense({ _type: 'stat', label: 'Total Shared Spent', value: totalSharedSpent, color: 'blue' })}>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/60 rounded-2xl flex items-center justify-center">
-                            <IndianRupee size={22} className="text-blue-600" />
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                        <div className="w-9 h-9 sm:w-14 sm:h-14 bg-white/60 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                            <IndianRupee size={16} className="sm:w-[22px] sm:h-[22px] text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-xs text-blue-800/60 font-medium mb-0.5">Total Shared Spent</p>
-                            <p className="text-2xl sm:text-3xl font-bold text-blue-900">&#8377;{totalSharedSpent.toLocaleString()}</p>
+                            <p className="text-[9px] sm:text-xs text-blue-800/60 font-medium mb-0.5">Total Spent</p>
+                            <p className="text-lg sm:text-3xl font-bold text-blue-900">&#8377;{totalSharedSpent.toLocaleString()}</p>
                         </div>
                     </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                    className="bg-pastel-pink rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-soft cursor-pointer hover:shadow-card transition-all"
+                    className="bg-pastel-pink rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-soft cursor-pointer hover:shadow-card transition-all"
                     onClick={() => setSelectedExpense({ _type: 'stat', label: 'Your Liability', value: myLiability, color: 'red' })}>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/60 rounded-2xl flex items-center justify-center">
-                            <ArrowDownLeft size={22} className="text-red-500" />
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                        <div className="w-9 h-9 sm:w-14 sm:h-14 bg-white/60 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                            <ArrowDownLeft size={16} className="sm:w-[22px] sm:h-[22px] text-red-500" />
                         </div>
                         <div>
-                            <p className="text-xs text-red-800/60 font-medium mb-0.5">Your Liability</p>
-                            <p className="text-2xl sm:text-3xl font-bold text-red-600">&#8377;{myLiability.toLocaleString()}</p>
+                            <p className="text-[9px] sm:text-xs text-red-800/60 font-medium mb-0.5">Liability</p>
+                            <p className="text-lg sm:text-3xl font-bold text-red-600">&#8377;{myLiability.toLocaleString()}</p>
                         </div>
                     </div>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                    className="bg-pastel-green rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-soft cursor-pointer hover:shadow-card transition-all"
+                    className="bg-pastel-green rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-soft cursor-pointer hover:shadow-card transition-all"
                     onClick={() => setSelectedExpense({ _type: 'stat', label: 'Your Receivable', value: myReceivable, color: 'green' })}>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/60 rounded-2xl flex items-center justify-center">
-                            <ArrowUpRight size={22} className="text-green-600" />
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                        <div className="w-9 h-9 sm:w-14 sm:h-14 bg-white/60 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                            <ArrowUpRight size={16} className="sm:w-[22px] sm:h-[22px] text-green-600" />
                         </div>
                         <div>
-                            <p className="text-xs text-green-800/60 font-medium mb-0.5">Your Receivable</p>
-                            <p className="text-2xl sm:text-3xl font-bold text-green-700">&#8377;{myReceivable.toLocaleString()}</p>
+                            <p className="text-[9px] sm:text-xs text-green-800/60 font-medium mb-0.5">Receivable</p>
+                            <p className="text-lg sm:text-3xl font-bold text-green-700">&#8377;{myReceivable.toLocaleString()}</p>
                         </div>
                     </div>
                 </motion.div>
             </div>
 
             {/* Transaction List */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6">
-                <div className="xl:col-span-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6">
+                <div className="lg:col-span-8">
                     <h3 className="font-bold text-text-primary text-sm sm:text-base mb-3 sm:mb-4">Transactions</h3>
                     <TechCard delay={0.4} className="min-h-[300px] sm:min-h-[400px] !p-2 sm:!p-4">
                         <div className="overflow-x-auto scrollbar-hide">
@@ -171,7 +171,7 @@ export const Expenses = () => {
                 </div>
 
                 {/* Sidebar */}
-                <div className="xl:col-span-4 space-y-4 sm:space-y-6">
+                <div className="lg:col-span-4 space-y-3 sm:space-y-6">
                     <h3 className="font-bold text-text-primary text-sm sm:text-base">Settlement</h3>
                     <TechCard delay={0.5} className="!p-4 sm:!p-5">
                         <div className="space-y-3 sm:space-y-4">

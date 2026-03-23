@@ -1,5 +1,7 @@
+import os
+import uuid
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -11,6 +13,10 @@ from app.api import deps
 from app.schemas.user import UserCreate, User, UserUpdate
 from app.schemas.token import Token
 from app.models.user import User as UserModel
+
+BACKEND_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+UPLOAD_DIR = os.path.join(BACKEND_ROOT, "uploads", "avatars")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 router = APIRouter()
 
@@ -197,8 +203,38 @@ def update_user_me(
         current_user.name = user_in.name
     if user_in.phone is not None:
         current_user.phone = user_in.phone
-    
+    if user_in.avatar_url is not None:
+        current_user.avatar_url = user_in.avatar_url
+
     db.add(current_user)
     db.commit()
     db.refresh(current_user)
     return current_user
+
+
+@router.post("/upload-avatar")
+async def upload_avatar(
+    file: UploadFile = File(...),
+    current_user: UserModel = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
+):
+    allowed = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+    if file.content_type not in allowed:
+        raise HTTPException(status_code=400, detail="Only JPEG, PNG, WebP, and GIF images are allowed")
+
+    name = file.filename or "avatar.jpg"
+    ext = name.rsplit(".", 1)[-1] if "." in name else "jpg"
+    filename = f"{current_user.id}_{uuid.uuid4().hex[:8]}.{ext}"
+    filepath = os.path.join(UPLOAD_DIR, filename)
+
+    contents = await file.read()
+    with open(filepath, "wb") as f:
+        f.write(contents)
+
+    avatar_url = f"/uploads/avatars/{filename}"
+    current_user.avatar_url = avatar_url
+    db.add(current_user)
+    db.commit()
+    db.refresh(current_user)
+
+    return {"avatar_url": avatar_url}

@@ -57,7 +57,7 @@ export const Analytics = () => {
             </div>
 
             {/* Colorful Stat Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-5 sm:mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-8">
                 {statCards.map((stat, i) => (
                     <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
                         className={`${stat.bg} rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-soft`}>
@@ -72,11 +72,11 @@ export const Analytics = () => {
             </div>
 
             {/* Charts */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-6">
-                <div className="xl:col-span-8">
-                    <h3 className="font-bold text-text-primary text-sm sm:text-base mb-3 sm:mb-4">Spending by Category</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6">
+                <div className="lg:col-span-8">
+                    <h3 className="font-bold text-text-primary text-xs sm:text-base mb-2 sm:mb-4">Spending by Category</h3>
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                        className="bg-surface-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-card min-h-[280px] sm:min-h-[380px]">
+                        className="bg-surface-card rounded-xl sm:rounded-3xl p-3 sm:p-6 shadow-card min-h-[220px] sm:min-h-[380px]">
                         <div className="space-y-5 sm:space-y-6 mt-1 sm:mt-2">
                             {categoryData.length > 0 ? categoryData.map((data, i) => (
                                 <div key={i} className="space-y-2">
@@ -103,7 +103,7 @@ export const Analytics = () => {
                     </motion.div>
                 </div>
 
-                <div className="xl:col-span-4 space-y-4 sm:space-y-6">
+                <div className="lg:col-span-4 space-y-3 sm:space-y-6">
                     {/* Efficiency */}
                     <div>
                         <h3 className="font-bold text-text-primary text-sm sm:text-base mb-3 sm:mb-4">Efficiency Score</h3>
@@ -133,7 +133,7 @@ export const Analytics = () => {
                         <h3 className="font-bold text-text-primary text-sm sm:text-base mb-3 sm:mb-4">Spending Pattern</h3>
                         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
                             className="bg-surface-card rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-card">
-                            <div className="flex items-end justify-between gap-1.5 h-28 sm:h-32 px-1">
+                            <div className="flex items-end justify-between gap-1 sm:gap-1.5 h-24 sm:h-32 px-0.5 sm:px-1">
                                 {[40, 60, 30, 80, 50, 90, 70, 45, 30, 40, 60, 50].map((h, i) => (
                                     <motion.div key={i} initial={{ height: 0 }} animate={{ height: `${h}%` }}
                                         transition={{ duration: 1, delay: 1 + (i * 0.04) }}

@@ -49,21 +49,21 @@ export const Chores = () => {
             </div>
 
             {/* Colorful Stat Cards */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-5 sm:mb-8">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                    className="bg-pastel-peach rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center shadow-soft">
-                    <p className="text-[10px] sm:text-xs text-orange-700/60 font-medium mb-1">Pending</p>
-                    <h3 className="text-3xl sm:text-4xl font-bold text-orange-800">{pendingChores.length}</h3>
+                    className="bg-pastel-peach rounded-xl sm:rounded-3xl p-3 sm:p-6 text-center shadow-soft">
+                    <p className="text-[9px] sm:text-xs text-orange-700/60 font-medium mb-0.5 sm:mb-1">Pending</p>
+                    <h3 className="text-2xl sm:text-4xl font-bold text-orange-800">{pendingChores.length}</h3>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-                    className="bg-pastel-green rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center shadow-soft">
-                    <p className="text-[10px] sm:text-xs text-green-700/60 font-medium mb-1">Done</p>
-                    <h3 className="text-3xl sm:text-4xl font-bold text-green-700">{completedChores.length}</h3>
+                    className="bg-pastel-green rounded-xl sm:rounded-3xl p-3 sm:p-6 text-center shadow-soft">
+                    <p className="text-[9px] sm:text-xs text-green-700/60 font-medium mb-0.5 sm:mb-1">Done</p>
+                    <h3 className="text-2xl sm:text-4xl font-bold text-green-700">{completedChores.length}</h3>
                 </motion.div>
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                    className="bg-pastel-lavender rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center shadow-soft">
-                    <p className="text-[10px] sm:text-xs text-purple-700/60 font-medium mb-1">Score</p>
-                    <h3 className="text-3xl sm:text-4xl font-bold text-purple-800">85%</h3>
+                    className="bg-pastel-lavender rounded-xl sm:rounded-3xl p-3 sm:p-6 text-center shadow-soft">
+                    <p className="text-[9px] sm:text-xs text-purple-700/60 font-medium mb-0.5 sm:mb-1">Score</p>
+                    <h3 className="text-2xl sm:text-4xl font-bold text-purple-800">85%</h3>
                 </motion.div>
             </div>
 

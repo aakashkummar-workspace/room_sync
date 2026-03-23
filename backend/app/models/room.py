@@ -36,6 +36,7 @@ class RoomMember(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     role = Column(Enum(RoleEnum), default=RoleEnum.MEMBER)
+    generated_password = Column(String, nullable=True)  # Only for admin-invited members
 
     # Relationships
     room = relationship("Room", back_populates="members")

@@ -243,16 +243,16 @@ export const Messages = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto flex flex-col" style={{ height: 'calc(100vh - 140px)' }}>
+        <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-170px)] lg:h-[calc(100vh-110px)]">
             {/* Header */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2 sm:mb-4">
                 <motion.div initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }}>
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-text-primary">Messages</h2>
-                    <p className="text-xs sm:text-sm text-text-muted mt-0.5">{roomName} &bull; {messages.length} messages</p>
+                    <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold text-text-primary">Messages</h2>
+                    <p className="text-[10px] sm:text-sm text-text-muted mt-0.5">{roomName} &bull; {messages.length} messages</p>
                 </motion.div>
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                    <span className="text-xs text-text-muted">Live</span>
+                <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-[10px] sm:text-xs text-text-muted">Live</span>
                 </div>
             </div>
 
@@ -313,8 +313,8 @@ export const Messages = () => {
                 </AnimatePresence>
 
                 {/* Input Area */}
-                <div className="border-t border-surface-border p-3 sm:p-4">
-                    <div className="flex items-end gap-2 sm:gap-3">
+                <div className="border-t border-surface-border p-2 sm:p-4">
+                    <div className="flex items-end gap-1.5 sm:gap-3">
                         <div className="flex-1 relative">
                             <textarea
                                 value={newMessage}
@@ -322,11 +322,11 @@ export const Messages = () => {
                                 onKeyDown={handleKeyDown}
                                 placeholder="Type a message..."
                                 rows={1}
-                                className="w-full bg-surface border border-surface-border rounded-2xl px-4 py-3 pr-10 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-text-light transition-all resize-none max-h-32"
-                                style={{ minHeight: '44px' }}
+                                className="w-full bg-surface border border-surface-border rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 pr-9 sm:pr-10 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-text-light transition-all resize-none max-h-32"
+                                style={{ minHeight: '40px' }}
                             />
-                            <button className="absolute right-3 bottom-3 text-text-light hover:text-text-muted transition-colors">
-                                <Smile size={18} />
+                            <button className="absolute right-2.5 sm:right-3 bottom-2.5 sm:bottom-3 text-text-light hover:text-text-muted transition-colors">
+                                <Smile size={16} className="sm:w-[18px] sm:h-[18px]" />
                             </button>
                         </div>
                         <motion.button
@@ -334,16 +334,16 @@ export const Messages = () => {
                             whileTap={{ scale: 0.95 }}
                             onClick={handleSend}
                             disabled={!newMessage.trim() || sending}
-                            className={`p-3 rounded-2xl transition-all shadow-button ${
+                            className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl transition-all shadow-button ${
                                 newMessage.trim()
                                     ? 'bg-text-primary text-white hover:opacity-90'
                                     : 'bg-surface-muted text-text-light cursor-not-allowed'
                             }`}
                         >
-                            <Send size={18} className={sending ? 'animate-pulse' : ''} />
+                            <Send size={16} className={`sm:w-[18px] sm:h-[18px] ${sending ? 'animate-pulse' : ''}`} />
                         </motion.button>
                     </div>
-                    <p className="text-[9px] text-text-light mt-2 text-center">Press Enter to send, Shift+Enter for new line</p>
+                    <p className="text-[8px] sm:text-[9px] text-text-light mt-1.5 sm:mt-2 text-center hidden sm:block">Press Enter to send, Shift+Enter for new line</p>
                 </div>
             </TechCard>
         </div>
