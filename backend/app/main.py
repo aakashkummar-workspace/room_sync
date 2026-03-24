@@ -24,6 +24,7 @@ app.add_middleware(
 BACKEND_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 uploads_dir = os.path.join(BACKEND_ROOT, "uploads")
 os.makedirs(os.path.join(uploads_dir, "avatars"), exist_ok=True)
+os.makedirs(os.path.join(uploads_dir, "messages"), exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

@@ -24,6 +24,7 @@ class DashboardSummary(BaseModel):
     invite_code: Optional[str] = None
     pending_chores_count: int
     unsettled_bills_count: int
+    total_room_expenses: Optional[int] = 0
     stats: List[DashboardStat]
     recent_activity: List[RecentActivity]
     room_members: List[dict] = []

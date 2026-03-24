@@ -11,3 +11,4 @@ from app.models.notice import Notice
 from app.models.calendar import CalendarEvent
 from app.models.house_rules import HouseRule
 from app.models.note import Note
+from app.models.notification import Notification

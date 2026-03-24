@@ -3,8 +3,12 @@ import { Modal } from './Modal';
 import { Button } from './Button';
 import { ClipboardCheck, Calendar, User, AlertCircle } from 'lucide-react';
 import { choreService } from '../services/chore';
+import { useAuth } from '../hooks/useAuth';
 
 export const ChoreModal = ({ isOpen, onClose, roomId, members, onRefresh }) => {
+    const { user } = useAuth();
+    const today = new Date().toISOString().split('T')[0];
+    const otherMembers = members?.filter(m => m.id !== user?.id) || [];
     const [title, setTitle] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [assignedTo, setAssignedTo] = useState('');
@@ -63,6 +67,7 @@ export const ChoreModal = ({ isOpen, onClose, roomId, members, onRefresh }) => {
                             type="date"
                             value={dueDate}
                             onChange={(e) => setDueDate(e.target.value)}
+                            min={today}
                             className="premium-input !pl-12"
                             required
                         />
@@ -80,7 +85,7 @@ export const ChoreModal = ({ isOpen, onClose, roomId, members, onRefresh }) => {
                             required
                         >
                             <option value="">Select Roommate</option>
-                            {members.map(member => (
+                            {otherMembers.map(member => (
                                 <option key={member.id} value={member.id}>{member.name}</option>
                             ))}
                         </select>

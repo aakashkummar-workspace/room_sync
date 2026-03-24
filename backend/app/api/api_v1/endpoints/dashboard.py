@@ -57,6 +57,12 @@ def get_dashboard_summary(
         models.Expense.created_at >= first_day_of_month
     ).scalar() or 0
 
+    # 5b. Total Room Expenses this month (all members)
+    total_room_expenses = db.query(func.sum(models.Expense.amount)).filter(
+        models.Expense.room_id == room_id,
+        models.Expense.created_at >= first_day_of_month
+    ).scalar() or 0
+
     # 6. Inventory Alerts
     inventory_alerts = db.query(models.InventoryItem).filter(
         models.InventoryItem.room_id == room_id,
@@ -119,6 +125,7 @@ def get_dashboard_summary(
         "invite_code": invite_code,
         "pending_chores_count": pending_chores_count,
         "unsettled_bills_count": unsettled_bills_count,
+        "total_room_expenses": int(total_room_expenses),
         "stats": stats,
         "recent_activity": recent_activity,
         "room_members": room_members

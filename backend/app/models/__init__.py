@@ -8,3 +8,4 @@ from .notice import Notice
 from .house_rules import HouseRule
 from .calendar import CalendarEvent
 from .message import Message
+from .notification import Notification

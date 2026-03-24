@@ -13,6 +13,17 @@ export const messagesService = {
         return response.data;
     },
 
+    sendMessageWithFile: async (roomId, file, content = '') => {
+        const formData = new FormData();
+        formData.append('room_id', roomId);
+        formData.append('file', file);
+        if (content) formData.append('content', content);
+        const response = await api.post('/messages/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return response.data;
+    },
+
     deleteMessage: async (messageId) => {
         const response = await api.delete(`/messages/${messageId}`);
         return response.data;

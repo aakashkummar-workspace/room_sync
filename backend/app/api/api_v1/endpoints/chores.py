@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 
 from app import models, schemas
 from app.api import deps
+from app.models.notification import Notification
+from app.models.room import RoomMember
 
 router = APIRouter()
 
@@ -37,7 +39,38 @@ def create_chore(
     db.add(chore)
     db.commit()
     db.refresh(chore)
+
+    # Notify all room members except the creator
+    room_members = db.query(RoomMember).filter(RoomMember.room_id == chore_in.room_id).all()
+    for member in room_members:
+        if member.user_id != current_user.id:
+            notif = Notification(
+                room_id=chore_in.room_id,
+                user_id=member.user_id,
+                title="New Task Assigned",
+                message=f"{current_user.name} added a new task: {chore.title}",
+                type="chore",
+                created_by=current_user.id,
+            )
+            db.add(notif)
+    db.commit()
+
     return chore
+
+@router.delete("/{chore_id}")
+def delete_chore(
+    *,
+    db: Session = Depends(deps.get_db),
+    chore_id: int,
+    current_user: models.User = Depends(deps.get_current_user),
+) -> Any:
+    """Delete a chore."""
+    chore = db.query(models.Chore).filter(models.Chore.id == chore_id).first()
+    if not chore:
+        raise HTTPException(status_code=404, detail="Chore not found")
+    db.delete(chore)
+    db.commit()
+    return {"msg": "Chore deleted"}
 
 @router.patch("/{chore_id}/status", response_model=schemas.Chore)
 def update_chore_status(

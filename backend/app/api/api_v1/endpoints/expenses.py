@@ -7,6 +7,7 @@ from app.schemas.expense import Expense, ExpenseCreate
 from app.models.expense import Expense as ExpenseModel, ExpenseSplit as ExpenseSplitModel
 from app.models.room import RoomMember as RoomMemberModel
 from app.models.user import User
+from app.models.notification import Notification
 
 router = APIRouter()
 
@@ -49,7 +50,22 @@ def add_expense(
         db.add(split)
     db.commit()
     db.refresh(expense)
-    
+
+    # Notify all room members except the creator
+    room_members = db.query(RoomMemberModel).filter(RoomMemberModel.room_id == expense_in.room_id).all()
+    for member in room_members:
+        if member.user_id != current_user.id:
+            notif = Notification(
+                room_id=expense_in.room_id,
+                user_id=member.user_id,
+                title="New Expense Added",
+                message=f"{current_user.name} added an expense: {expense.title} (₹{expense.amount})",
+                type="expense",
+                created_by=current_user.id,
+            )
+            db.add(notif)
+    db.commit()
+
     return expense
 
 @router.get("/{room_id}", response_model=List[Expense])

@@ -59,10 +59,10 @@ const ActivityItem = ({ type, title, amount, user, time, onClick }) => (
 );
 
 const categoryConfig = [
-    { label: 'Expenses', icon: Wallet, path: '/expenses', color: 'bg-pastel-pink', iconColor: 'text-pink-600' },
-    { label: 'Chores', icon: CheckSquare, path: '/chores', color: 'bg-pastel-green', iconColor: 'text-green-600' },
-    { label: 'Inventory', icon: Package, path: '/inventory', color: 'bg-pastel-mint', iconColor: 'text-teal-600' },
-    { label: 'Roommates', icon: Users, path: '/roommates', color: 'bg-pastel-lavender', iconColor: 'text-purple-600' },
+    { label: 'Expenses', icon: Wallet, path: '/expenses', color: 'bg-pastel-pink', iconColor: 'text-pink-600', statKey: 'total_balance' },
+    { label: 'Chores', icon: CheckSquare, path: '/chores', color: 'bg-pastel-green', iconColor: 'text-green-600', statKey: 'pending_chores' },
+    { label: 'Inventory', icon: Package, path: '/inventory', color: 'bg-pastel-mint', iconColor: 'text-teal-600', statKey: 'inventory_alerts' },
+    { label: 'Roommates', icon: Users, path: '/roommates', color: 'bg-pastel-lavender', iconColor: 'text-purple-600', statKey: 'room_members' },
 ];
 
 export const Dashboard = () => {
@@ -101,35 +101,10 @@ export const Dashboard = () => {
     );
 
     const firstName = data.user_name?.split(' ')[0] || user?.name?.split(' ')[0] || 'User';
-    const pendingCount = data.stats?.find(s => s.title?.toLowerCase().includes('pending'))?.value || '06';
+    const pendingCount = data.pending_chores_count ?? 0;
 
     return (
         <div className="max-w-6xl mx-auto">
-            {/* Tagline Banner */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="mb-4 sm:mb-6 relative overflow-hidden rounded-2xl sm:rounded-3xl bg-text-primary p-4 sm:p-5"
-            >
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-                <div className="absolute bottom-0 left-0 w-16 h-16 sm:w-20 sm:h-20 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-                <div className="absolute top-1/2 right-1/4 w-2 h-2 bg-white/10 rounded-full" />
-
-                <div className="relative flex items-center gap-3 sm:gap-4">
-                    <div className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                        <Zap size={16} className="sm:w-5 sm:h-5 text-white/70" />
-                    </div>
-                    <div className="min-w-0">
-                        <p className="text-[11px] sm:text-sm font-medium text-white/90 leading-relaxed">
-                            "Built for the way roommates actually live."
-                        </p>
-                        <p className="text-[9px] sm:text-xs text-white/40 mt-0.5">CasaSync — Smart Hostel Automation</p>
-                    </div>
-                </div>
-            </motion.div>
-
             {/* Greeting */}
             <div className="flex items-start sm:items-center justify-between mb-4 sm:mb-8 gap-2">
                 <motion.div initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
@@ -159,7 +134,10 @@ export const Dashboard = () => {
                             </div>
                             <h4 className="font-bold text-text-primary text-[11px] sm:text-sm">{cat.label}</h4>
                             <p className="text-[9px] sm:text-xs text-text-secondary mt-0.5">
-                                {data.stats?.[idx]?.value || '0'} Items
+                                {cat.statKey === 'total_balance' ? `₹${(data.total_room_expenses || 0).toLocaleString()}`
+                                : cat.statKey === 'pending_chores' ? `${data.pending_chores_count || 0} Pending`
+                                : cat.statKey === 'inventory_alerts' ? `${data.stats?.[3]?.value || 0} Items`
+                                : `${data.room_members?.length || 0} Members`}
                             </p>
                         </motion.div>
                     ))}

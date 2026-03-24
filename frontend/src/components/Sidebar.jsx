@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Wallet, CheckSquare, Package, PieChart, Bell, Settings, LogOut, Users, MessageCircle, MoreHorizontal, X } from 'lucide-react';
+import { Home, Wallet, CheckSquare, Package, PieChart, Bell, Settings, LogOut, Users, MoreHorizontal } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -42,14 +42,12 @@ export const Sidebar = () => {
         { icon: Package, label: 'Inventory', path: '/inventory' },
         { icon: Users, label: 'Roommates', path: '/roommates' },
         { icon: PieChart, label: 'Analytics', path: '/analytics' },
-        { icon: MessageCircle, label: 'Messages', path: '/messages' },
     ];
 
     const bottomNavItems = [
         { icon: Home, label: 'Home', path: '/' },
         { icon: Wallet, label: 'Expenses', path: '/expenses' },
         { icon: Users, label: 'Roommates', path: '/roommates' },
-        { icon: MessageCircle, label: 'Messages', path: '/messages' },
     ];
 
     const moreMenuItems = [

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, CheckCircle2, Circle, Clock, Calendar, User as UserIcon } from 'lucide-react';
+import { Plus, CheckCircle2, Circle, Clock, Calendar, User as UserIcon, Trash2, RotateCcw } from 'lucide-react';
 import { Button } from '../components/Button';
 import { ChoreModal } from '../components/ChoreModal';
 import { choreService } from '../services/chore';
@@ -13,6 +13,7 @@ export const Chores = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [dashboardData, setDashboardData] = useState(null);
     const [selectedChore, setSelectedChore] = useState(null);
+    const [actionLoading, setActionLoading] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -25,6 +26,36 @@ export const Chores = () => {
 
     useEffect(() => { fetchData(); }, []);
 
+    const handleMarkDone = async (choreId) => {
+        setActionLoading(true);
+        try {
+            await choreService.updateChoreStatus(choreId, 'completed');
+            await fetchData();
+            setSelectedChore(null);
+        } catch (error) { console.error("Failed to update:", error); }
+        finally { setActionLoading(false); }
+    };
+
+    const handleMarkPending = async (choreId) => {
+        setActionLoading(true);
+        try {
+            await choreService.updateChoreStatus(choreId, 'pending');
+            await fetchData();
+            setSelectedChore(null);
+        } catch (error) { console.error("Failed to update:", error); }
+        finally { setActionLoading(false); }
+    };
+
+    const handleDelete = async (choreId) => {
+        setActionLoading(true);
+        try {
+            await choreService.deleteChore(choreId);
+            await fetchData();
+            setSelectedChore(null);
+        } catch (error) { console.error("Failed to delete:", error); }
+        finally { setActionLoading(false); }
+    };
+
     if (loading) return (
         <div className="flex items-center justify-center h-[60vh]">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
@@ -35,6 +66,10 @@ export const Chores = () => {
     const pendingChores = chores.filter(c => c.status === 'pending');
     const completedChores = chores.filter(c => c.status === 'completed');
     const choreCardColors = ['bg-pastel-pink', 'bg-pastel-green', 'bg-pastel-lavender', 'bg-pastel-peach', 'bg-pastel-blue', 'bg-pastel-mint'];
+
+    // Dynamic score calculation
+    const totalChores = chores.length;
+    const score = totalChores > 0 ? Math.round((completedChores.length / totalChores) * 100) : 0;
 
     const getAssigneeName = (id) => dashboardData?.room_members?.find(m => m.id === id)?.name || 'Unassigned';
 
@@ -63,7 +98,7 @@ export const Chores = () => {
                 <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
                     className="bg-pastel-lavender rounded-xl sm:rounded-3xl p-3 sm:p-6 text-center shadow-soft">
                     <p className="text-[9px] sm:text-xs text-purple-700/60 font-medium mb-0.5 sm:mb-1">Score</p>
-                    <h3 className="text-2xl sm:text-4xl font-bold text-purple-800">85%</h3>
+                    <h3 className="text-2xl sm:text-4xl font-bold text-purple-800">{score}%</h3>
                 </motion.div>
             </div>
 
@@ -79,9 +114,13 @@ export const Chores = () => {
                             onClick={() => setSelectedChore(chore)}
                             className={`${choreCardColors[idx % choreCardColors.length]} rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-soft hover:shadow-card transition-all cursor-pointer`}>
                             <div className="flex items-start gap-3 sm:gap-4">
-                                <div className="mt-0.5 text-text-secondary/40 shrink-0">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleMarkDone(chore.id); }}
+                                    className="mt-0.5 text-text-secondary/40 hover:text-green-500 transition-colors shrink-0"
+                                    title="Mark as done"
+                                >
                                     <Circle size={22} strokeWidth={2} />
-                                </div>
+                                </button>
                                 <div className="flex-1 min-w-0">
                                     <h4 className="font-semibold text-sm sm:text-base text-text-primary">{chore.title}</h4>
                                     <div className="flex flex-wrap gap-3 sm:gap-4 mt-2 sm:mt-3">
@@ -139,7 +178,7 @@ export const Chores = () => {
                     <div>
                         <div className={`${selectedChore.status === 'completed' ? 'bg-pastel-green' : 'bg-pastel-peach'} rounded-2xl p-5 mb-4`}>
                             <h3 className="text-lg font-bold text-text-primary mb-2">{selectedChore.title}</h3>
-                            <span className={`badge ${selectedChore.status === 'completed' ? 'bg-green-200 text-green-700' : 'bg-orange-200 text-orange-700'}`}>
+                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${selectedChore.status === 'completed' ? 'bg-green-200 text-green-700' : 'bg-orange-200 text-orange-700'}`}>
                                 {selectedChore.status === 'completed' ? 'Completed' : 'Pending'}
                             </span>
                         </div>
@@ -147,6 +186,37 @@ export const Chores = () => {
                         <DetailRow label="Due date" value={new Date(selectedChore.due_date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} icon={Calendar} color="bg-pastel-lavender" />
                         <DetailRow label="Status" value={selectedChore.status} icon={Clock} color="bg-pastel-peach" />
                         <DetailRow label="Created" value={selectedChore.created_at ? new Date(selectedChore.created_at).toLocaleDateString() : 'N/A'} icon={Calendar} color="bg-pastel-pink" />
+
+                        {/* Action Buttons */}
+                        <div className="mt-5 space-y-2.5">
+                            {selectedChore.status === 'pending' ? (
+                                <button
+                                    onClick={() => handleMarkDone(selectedChore.id)}
+                                    disabled={actionLoading}
+                                    className="w-full flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-semibold text-sm transition-colors disabled:opacity-50"
+                                >
+                                    <CheckCircle2 size={18} />
+                                    {actionLoading ? 'Updating...' : 'Mark as Done'}
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => handleMarkPending(selectedChore.id)}
+                                    disabled={actionLoading}
+                                    className="w-full flex items-center justify-center gap-2 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-semibold text-sm transition-colors disabled:opacity-50"
+                                >
+                                    <RotateCcw size={18} />
+                                    {actionLoading ? 'Updating...' : 'Undo — Mark as Pending'}
+                                </button>
+                            )}
+                            <button
+                                onClick={() => handleDelete(selectedChore.id)}
+                                disabled={actionLoading}
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-red-50 hover:bg-red-100 text-red-500 rounded-2xl font-semibold text-sm transition-colors border border-red-100 disabled:opacity-50"
+                            >
+                                <Trash2 size={18} />
+                                {actionLoading ? 'Deleting...' : 'Delete Task'}
+                            </button>
+                        </div>
                     </div>
                 )}
             </DetailPopup>
