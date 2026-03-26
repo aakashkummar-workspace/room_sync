@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { authService } from '../services/auth';
+import { clearCurrentUser } from '../services/mockData';
 
 const AuthContext = createContext(null);
 
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
                     const userData = await authService.getMe();
                     setUser(userData);
                 } catch (err) {
-                    localStorage.removeItem('token');
+                    clearCurrentUser();
                 }
             }
             setLoading(false);
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        clearCurrentUser();
         setUser(null);
     };
 

@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings';
 import { dashboardService } from '../services/dashboard';
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1').replace('/api/v1', '');
+// No backend needed — avatars stored as data URLs
 
 export const Settings = () => {
     const { logout, user, updateProfile, updateAvatar } = useAuth();
@@ -70,9 +70,7 @@ export const Settings = () => {
     };
 
     const getAvatarUrl = () => {
-        if (!user?.avatar_url) return null;
-        if (user.avatar_url.startsWith('http')) return user.avatar_url;
-        return `${API_BASE}${user.avatar_url}`;
+        return user?.avatar_url || null;
     };
 
     const sections = [

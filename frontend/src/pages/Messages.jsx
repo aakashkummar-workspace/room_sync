@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import { messagesService } from '../services/messages';
 import { dashboardService } from '../services/dashboard';
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1').replace('/api/v1', '');
+// No backend needed — files stored as data URLs
 const POLL_INTERVAL = 3000;
 
 const formatTime = (dateStr) => {
@@ -47,12 +47,12 @@ const ChatBubble = ({ message, isOwn, onDelete, showAvatar }) => (
                 {message.attachment_url && (
                     <div className="mb-2">
                         {message.attachment_type === 'image' ? (
-                            <a href={`${API_BASE}${message.attachment_url}`} target="_blank" rel="noopener noreferrer">
-                                <img src={`${API_BASE}${message.attachment_url}`} alt={message.attachment_name || 'Image'}
+                            <a href={message.attachment_url || message.file_url} target="_blank" rel="noopener noreferrer">
+                                <img src={message.attachment_url || message.file_url} alt={message.attachment_name || 'Image'}
                                     className="max-w-full max-h-48 rounded-xl object-cover cursor-pointer hover:opacity-90 transition-opacity" />
                             </a>
                         ) : (
-                            <a href={`${API_BASE}${message.attachment_url}`} target="_blank" rel="noopener noreferrer"
+                            <a href={message.attachment_url || message.file_url} target="_blank" rel="noopener noreferrer"
                                 className={`flex items-center gap-2 p-2 rounded-xl ${isOwn ? 'bg-white/10 hover:bg-white/20' : 'bg-surface hover:bg-surface-hover'} transition-colors`}>
                                 <FileText size={16} className={isOwn ? 'text-white/70' : 'text-text-muted'} />
                                 <span className={`text-xs font-medium truncate ${isOwn ? 'text-white/90' : 'text-text-primary'}`}>

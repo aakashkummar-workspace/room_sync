@@ -7,7 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useSettings } from '../hooks/useSettings';
 import { notificationService } from '../services/notification';
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1').replace('/api/v1', '');
+// No backend needed — avatars/files are stored as data URLs in localStorage
 
 const typeIcons = {
     chore: ClipboardCheck,
@@ -36,9 +36,7 @@ export const MainLayout = ({ children }) => {
     const dropdownRef = useRef(null);
     const prevCountRef = useRef(0);
 
-    const avatarUrl = user?.avatar_url
-        ? user.avatar_url.startsWith('http') ? user.avatar_url : `${API_BASE}${user.avatar_url}`
-        : null;
+    const avatarUrl = user?.avatar_url || null;
 
     // Fetch notifications
     const fetchNotifications = async () => {

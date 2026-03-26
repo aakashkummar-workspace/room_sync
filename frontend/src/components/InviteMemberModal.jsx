@@ -2,7 +2,15 @@ import React, { useState } from 'react';
 import { Modal } from './Modal';
 import { Button } from './Button';
 import { Mail, User, AlertCircle, Copy, Check, Key } from 'lucide-react';
-import api from '../services/api';
+import { getDB, saveDB, getCurrentUser } from '../services/mockData';
+
+// Generate a random password
+const generatePassword = () => {
+    const chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let pass = '';
+    for (let i = 0; i < 8; i++) pass += chars[Math.floor(Math.random() * chars.length)];
+    return pass;
+};
 
 export const InviteMemberModal = ({ isOpen, onClose, roomId, onRefresh }) => {
     const [email, setEmail] = useState('');
@@ -19,14 +27,28 @@ export const InviteMemberModal = ({ isOpen, onClose, roomId, onRefresh }) => {
         setResult(null);
 
         try {
-            const response = await api.post(`/rooms/${roomId}/invite`, {
+            const db = getDB();
+            if (db.users.find(u => u.email === email)) {
+                throw new Error('This email is already registered.');
+            }
+            const password = generatePassword();
+            const newUser = {
+                id: db.users.length ? Math.max(...db.users.map(u => u.id)) + 1 : 1,
+                name: name || email.split('@')[0],
                 email,
-                name: name || '',
-            });
-            setResult(response.data);
+                password,
+                phone: '',
+                avatar_url: '',
+                role: 'member',
+                room_id: roomId,
+                created_at: new Date().toISOString(),
+            };
+            db.users.push(newUser);
+            saveDB(db);
+            setResult({ email, password, message: `${newUser.name} has been added to the room.` });
             onRefresh();
         } catch (err) {
-            setError(err.response?.data?.detail || 'Failed to invite member. Please try again.');
+            setError(err.message || 'Failed to invite member. Please try again.');
         } finally {
             setLoading(false);
         }

@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Mail, User, Home, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
+
 
 export const Login = () => {
     const [name, setName] = useState('');
@@ -38,53 +38,27 @@ export const Login = () => {
         }
     };
 
-    const handleGoogleLogin = useGoogleLogin({
-        onSuccess: async (tokenResponse) => {
-            setSocialLoading('google');
-            setError('');
-            try {
-                await googleLogin(tokenResponse.access_token);
-                navigate('/');
-            } catch (err) {
-                setError('Google login failed. Please try again.');
-            } finally {
-                setSocialLoading('');
-            }
-        },
-        onError: () => { setError('Google login was cancelled.'); },
-    });
+    const handleGoogleLogin = async () => {
+        setSocialLoading('google');
+        setError('');
+        try {
+            await googleLogin('mock_google_token');
+            navigate('/');
+        } catch (err) {
+            setError('Google login failed. Please try again.');
+        } finally {
+            setSocialLoading('');
+        }
+    };
 
-    useEffect(() => {
-        if (!facebookAppId) return;
-        if (document.getElementById('facebook-jssdk')) return;
-        const script = document.createElement('script');
-        script.id = 'facebook-jssdk';
-        script.src = 'https://connect.facebook.net/en_US/sdk.js';
-        script.async = true;
-        script.defer = true;
-        script.crossOrigin = 'anonymous';
-        script.onload = () => {
-            window.FB?.init({ appId: facebookAppId, cookie: true, xfbml: false, version: 'v19.0' });
-        };
-        document.body.appendChild(script);
-    }, [facebookAppId]);
-
-    const handleFacebookLogin = useCallback(() => {
-        if (!window.FB) { setError('Facebook SDK not loaded.'); return; }
+    const handleFacebookLogin = useCallback(async () => {
         setSocialLoading('facebook');
         setError('');
-        window.FB.login(
-            async (response) => {
-                if (response.authResponse) {
-                    try {
-                        await facebookLogin(response.authResponse.accessToken);
-                        navigate('/');
-                    } catch (err) { setError('Facebook login failed.'); }
-                } else { setError('Facebook login was cancelled.'); }
-                setSocialLoading('');
-            },
-            { scope: 'email,public_profile' }
-        );
+        try {
+            await facebookLogin('mock_fb_token');
+            navigate('/');
+        } catch (err) { setError('Facebook login failed.'); }
+        setSocialLoading('');
     }, [facebookLogin, navigate]);
 
     /* ─── Shared Form JSX ─── */

@@ -124,12 +124,18 @@ export const Roommates = () => {
         if (!roomId || !isCurrentUserAdmin) return;
         if (!window.confirm('Are you sure you want to remove this member from the room?')) return;
         try {
-            const api = (await import('../services/api')).default;
-            await api.delete(`/rooms/${roomId}/members/${userId}`);
+            const { getDB, saveDB } = await import('../services/mockData');
+            const db = getDB();
+            const idx = db.users.findIndex(u => u.id === userId);
+            if (idx !== -1) {
+                db.users[idx].room_id = null;
+                db.users[idx].role = 'member';
+                saveDB(db);
+            }
             setSelectedMember(null);
             fetchData();
         } catch (error) {
-            alert(error.response?.data?.detail || 'Failed to remove member');
+            alert('Failed to remove member');
         }
     };
 
