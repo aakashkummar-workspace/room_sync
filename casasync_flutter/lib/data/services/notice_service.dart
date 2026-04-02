@@ -8,6 +8,7 @@ class NoticeService {
 
   Future<void> addNotice(int roomId, String title, String body, bool important) async {
     final userName = CurrentUser.name ?? '';
+    final userId = CurrentUser.id;
     await SupabaseDB.addNotice({
       'room_id': roomId,
       'title': title,
@@ -15,6 +16,17 @@ class NoticeService {
       'author': userName,
       'important': important,
     });
+    // Notify all room members
+    final members = await SupabaseDB.getRoomMembers(roomId);
+    await Future.wait(members.where((u) => u['id'].toString() != userId).map((u) =>
+      SupabaseDB.addNotification({
+        'user_id': u['id'].toString(),
+        'title': important ? 'Important Notice' : 'New Notice',
+        'message': '$userName posted: "$title"',
+        'type': 'notice',
+        'is_read': false,
+      }),
+    ));
   }
 
   Future<void> deleteNotice(int noticeId) async {
@@ -37,6 +49,7 @@ class NoticeService {
 
   Future<void> createPoll(int roomId, String question, List<String> options) async {
     final userName = CurrentUser.name ?? '';
+    final userId = CurrentUser.id;
     final poll = await SupabaseDB.createPoll({
       'room_id': roomId,
       'question': question,
@@ -50,6 +63,17 @@ class NoticeService {
       'votes': <String>[],
     }).toList();
     await SupabaseDB.addPollOptions(optionMaps);
+    // Notify all room members
+    final members = await SupabaseDB.getRoomMembers(roomId);
+    await Future.wait(members.where((u) => u['id'].toString() != userId).map((u) =>
+      SupabaseDB.addNotification({
+        'user_id': u['id'].toString(),
+        'title': 'New Poll',
+        'message': '$userName asked: "$question"',
+        'type': 'poll',
+        'is_read': false,
+      }),
+    ));
   }
 
   Future<void> vote(int pollId, int optionIndex) async {

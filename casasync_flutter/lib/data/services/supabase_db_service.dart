@@ -87,6 +87,10 @@ class SupabaseDB {
     return room;
   }
 
+  static Future<void> updateRoom(int roomId, Map<String, dynamic> data) async {
+    await _client.from('rooms').update(data).eq('id', roomId);
+  }
+
   static Future<List<Map<String, dynamic>>> getRoomMembers(int roomId) async {
     return await _client.from('profiles').select().eq('room_id', roomId);
   }

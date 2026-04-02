@@ -34,7 +34,9 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     final categories = <String, double>{};
     for (var e in expenses) categories[e.category] = (categories[e.category] ?? 0) + e.amount;
 
-    return ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
+    return RefreshIndicator(
+      onRefresh: () async { setState(() => loading = true); await _loadData(); },
+      child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
       const Text('Analytics', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
       const Text('Spending insights', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
       const SizedBox(height: 20),
@@ -75,7 +77,8 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
           Text('85%', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
         ])),
       ])),
-    ]);
+    ]),
+    );
   }
 
   Widget _stat(String t, String v, Color c, IconData ic) => Expanded(child: AppCard(color: c, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

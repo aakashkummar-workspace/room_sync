@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,8 +20,8 @@ class MainLayout extends ConsumerStatefulWidget {
 class _MainLayoutState extends ConsumerState<MainLayout> {
   int _selectedIndex = 0;
   int _unreadCount = 0;
-  bool _showMore = false;
   List<NotificationModel> _notifications = [];
+  Timer? _notifTimer;
 
   final _navItems = const [
     _NavItem(Icons.home_rounded, 'Home', '/'),
@@ -41,6 +42,13 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   void initState() {
     super.initState();
     _loadNotifications();
+    _notifTimer = Timer.periodic(const Duration(seconds: 30), (_) => _loadNotifications());
+  }
+
+  @override
+  void dispose() {
+    _notifTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadNotifications() async {
@@ -208,7 +216,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                 // More button
                 Expanded(
                   child: GestureDetector(
-                    onTap: () => setState(() => _showMore = true),
+                    onTap: () => _showMoreMenu(),
                     child: _buildNavIcon(
                       Icons.more_horiz,
                       'More',
@@ -222,17 +230,15 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
         ),
       ),
 
-      // More menu overlay
-      floatingActionButton: _showMore ? null : FloatingActionButton(
-        mini: true,
-        backgroundColor: AppColors.secondary,
-        onPressed: () => context.go('/messages'),
-        child: const Icon(Icons.chat_bubble_outline, size: 18, color: Colors.white),
-      ),
+      floatingActionButton: GoRouterState.of(context).matchedLocation == '/messages'
+        ? null
+        : FloatingActionButton(
+            mini: true,
+            backgroundColor: AppColors.secondary,
+            onPressed: () => context.go('/messages'),
+            child: const Icon(Icons.chat_bubble_outline, size: 18, color: Colors.white),
+          ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-
-      // More sheet
-      bottomSheet: _showMore ? _buildMoreSheet() : null,
     );
   }
 
@@ -240,7 +246,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          setState(() { _selectedIndex = index; _showMore = false; });
+          setState(() => _selectedIndex = index);
           context.go(item.path);
         },
         behavior: HitTestBehavior.opaque,
@@ -267,74 +273,69 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     );
   }
 
-  Widget _buildMoreSheet() {
-    return GestureDetector(
-      onTap: () => setState(() => _showMore = false),
-      child: Container(
-        color: Colors.black26,
+  void _showMoreMenu() {
+    final currentLocation = GoRouterState.of(context).matchedLocation;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
-                    children: [
-                      ..._moreItems.map((item) => GestureDetector(
-                        onTap: () {
-                          setState(() { _showMore = false; _selectedIndex = 4; });
-                          context.go(item.path);
-                        },
-                        child: SizedBox(
-                          width: 72,
-                          child: Column(children: [
-                            Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: GoRouterState.of(context).matchedLocation == item.path ? AppColors.primary : AppColors.background,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Icon(item.icon, size: 22, color: GoRouterState.of(context).matchedLocation == item.path ? Colors.white : AppColors.textMuted),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(item.label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
-                          ]),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                ..._moreItems.map((item) => GestureDetector(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    setState(() => _selectedIndex = 4);
+                    context.go(item.path);
+                  },
+                  child: SizedBox(
+                    width: 72,
+                    child: Column(children: [
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: currentLocation == item.path ? AppColors.primary : AppColors.background,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      )),
-                      // Logout
-                      GestureDetector(
-                        onTap: () async {
-                          setState(() => _showMore = false);
-                          await ref.read(authProvider.notifier).logout();
-                          if (mounted) context.go('/login');
-                        },
-                        child: SizedBox(
-                          width: 72,
-                          child: Column(children: [
-                            Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(color: AppColors.pastelPink, borderRadius: BorderRadius.circular(16)),
-                              child: const Icon(Icons.logout, size: 22, color: AppColors.error),
-                            ),
-                            const SizedBox(height: 6),
-                            const Text('Logout', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.error)),
-                          ]),
-                        ),
+                        child: Icon(item.icon, size: 22, color: currentLocation == item.path ? Colors.white : AppColors.textMuted),
                       ),
-                    ],
+                      const SizedBox(height: 6),
+                      Text(item.label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+                    ]),
                   ),
-                ],
-              ),
+                )),
+                // Logout
+                GestureDetector(
+                  onTap: () async {
+                    Navigator.pop(ctx);
+                    await ref.read(authProvider.notifier).logout();
+                    if (mounted) context.go('/login');
+                  },
+                  child: SizedBox(
+                    width: 72,
+                    child: Column(children: [
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(color: AppColors.pastelPink, borderRadius: BorderRadius.circular(16)),
+                        child: const Icon(Icons.logout, size: 22, color: AppColors.error),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text('Logout', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.error)),
+                    ]),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

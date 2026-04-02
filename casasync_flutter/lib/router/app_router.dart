@@ -57,7 +57,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/roommates', builder: (context, state) => const RoommatesScreen()),
           GoRoute(path: '/messages', builder: (context, state) => const MessagesScreen()),
           GoRoute(path: '/analytics', builder: (context, state) => const AnalyticsScreen()),
-          GoRoute(path: '/notices', builder: (context, state) => const NoticesScreen()),
+          GoRoute(path: '/notices', builder: (context, state) {
+            final tab = int.tryParse(state.uri.queryParameters['tab'] ?? '0') ?? 0;
+            return NoticesScreen(initialTab: tab);
+          }),
           GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
         ],
       ),

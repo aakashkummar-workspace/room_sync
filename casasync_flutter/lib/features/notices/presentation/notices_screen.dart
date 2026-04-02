@@ -9,7 +9,8 @@ import '../../../shared/widgets/app_bottom_sheet.dart';
 import '../../../shared/widgets/empty_state.dart';
 
 class NoticesScreen extends ConsumerStatefulWidget {
-  const NoticesScreen({super.key});
+  final int initialTab;
+  const NoticesScreen({super.key, this.initialTab = 0});
   @override
   ConsumerState<NoticesScreen> createState() => _NoticesScreenState();
 }
@@ -27,7 +28,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _tabCtrl = TabController(length: 2, vsync: this);
+    _tabCtrl = TabController(length: 2, vsync: this, initialIndex: widget.initialTab);
     _loadData();
   }
 

@@ -164,97 +164,115 @@ class DashboardScreen extends ConsumerWidget {
 
           const SizedBox(height: 28),
 
-          // Notices & Polls row
-          Row(
-            children: [
-              // Notices box
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => context.go('/notices'),
-                  child: AppCard(
-                    color: AppColors.pastelPink,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), borderRadius: BorderRadius.circular(10)),
-                            child: const Icon(Icons.campaign_outlined, size: 18, color: Colors.pink),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), borderRadius: BorderRadius.circular(8)),
-                            child: Text('${(data['recent_notices'] as List?)?.length ?? 0}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.pink)),
-                          ),
-                        ]),
-                        const SizedBox(height: 12),
-                        const Text('Notices', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-                        const SizedBox(height: 4),
-                        Builder(builder: (_) {
-                          final notices = (data['recent_notices'] as List?) ?? [];
-                          if (notices.isEmpty) return const Text('No notices', style: TextStyle(fontSize: 11, color: AppColors.textMuted));
-                          final latest = notices.first;
-                          return Text(latest['title'] ?? '', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary), maxLines: 2, overflow: TextOverflow.ellipsis);
-                        }),
-                        const SizedBox(height: 8),
-                        const Row(children: [
-                          Text('View all', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.pink)),
-                          SizedBox(width: 4),
-                          Icon(Icons.arrow_forward_ios, size: 10, color: Colors.pink),
-                        ]),
-                      ],
+          // Notices section
+          Builder(builder: (_) {
+            final notices = (data['recent_notices'] as List?) ?? [];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  const Icon(Icons.campaign_outlined, size: 20, color: Colors.pink),
+                  const SizedBox(width: 8),
+                  const Expanded(child: Text('Notices', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                  if (notices.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(color: AppColors.pastelPink, borderRadius: BorderRadius.circular(8)),
+                      child: Text('${notices.length}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.pink)),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Polls box
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => context.go('/notices'),
-                  child: AppCard(
-                    color: AppColors.pastelPurple,
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), borderRadius: BorderRadius.circular(10)),
-                            child: const Icon(Icons.poll_outlined, size: 18, color: Colors.purple),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), borderRadius: BorderRadius.circular(8)),
-                            child: Text('${(data['active_polls'] as List?)?.length ?? 0}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.purple)),
-                          ),
-                        ]),
-                        const SizedBox(height: 12),
-                        const Text('Polls', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-                        const SizedBox(height: 4),
-                        Builder(builder: (_) {
-                          final polls = (data['active_polls'] as List?) ?? [];
-                          if (polls.isEmpty) return const Text('No active polls', style: TextStyle(fontSize: 11, color: AppColors.textMuted));
-                          return Text('${polls.length} active poll${polls.length > 1 ? 's' : ''}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary));
-                        }),
-                        const SizedBox(height: 8),
-                        const Row(children: [
-                          Text('Vote now', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.purple)),
-                          SizedBox(width: 4),
-                          Icon(Icons.arrow_forward_ios, size: 10, color: Colors.purple),
-                        ]),
-                      ],
+                ]),
+                const SizedBox(height: 10),
+                if (notices.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('No notices yet', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                  )
+                else
+                  ...notices.take(3).map((n) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: AppCard(
+                      color: (n['important'] == true) ? AppColors.pastelPink : AppColors.background,
+                      padding: const EdgeInsets.all(12),
+                      child: Row(children: [
+                        if (n['important'] == true) ...[
+                          const Icon(Icons.priority_high, size: 16, color: AppColors.error),
+                          const SizedBox(width: 6),
+                        ],
+                        Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(n['title'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                            if (n['body'] != null && (n['body'] as String).isNotEmpty)
+                              Text(n['body'], style: const TextStyle(fontSize: 11, color: AppColors.textMuted), maxLines: 1, overflow: TextOverflow.ellipsis),
+                          ],
+                        )),
+                        Text(n['author'] ?? '', style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                      ]),
                     ),
-                  ),
+                  )),
+                GestureDetector(
+                  onTap: () => context.go('/notices?tab=0'),
+                  child: const Row(children: [
+                    Spacer(),
+                    Text('View all', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.pink)),
+                    SizedBox(width: 4),
+                    Icon(Icons.arrow_forward_ios, size: 12, color: Colors.pink),
+                  ]),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
+          const SizedBox(height: 24),
+
+          // Polls section
+          Builder(builder: (_) {
+            final polls = (data['active_polls'] as List?) ?? [];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  const Icon(Icons.poll_outlined, size: 20, color: Colors.purple),
+                  const SizedBox(width: 8),
+                  const Expanded(child: Text('Polls', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                  if (polls.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(color: AppColors.pastelPurple, borderRadius: BorderRadius.circular(8)),
+                      child: Text('${polls.length}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.purple)),
+                    ),
+                ]),
+                const SizedBox(height: 10),
+                if (polls.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('No active polls', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                  )
+                else
+                  ...polls.take(3).map((p) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: AppCard(
+                      color: AppColors.pastelPurple,
+                      padding: const EdgeInsets.all(12),
+                      child: Row(children: [
+                        const Icon(Icons.how_to_vote_outlined, size: 16, color: Colors.purple),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(p['question'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                        Text(p['author'] ?? '', style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                      ]),
+                    ),
+                  )),
+                GestureDetector(
+                  onTap: () => context.go('/notices?tab=1'),
+                  child: const Row(children: [
+                    Spacer(),
+                    Text('View all', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.purple)),
+                    SizedBox(width: 4),
+                    Icon(Icons.arrow_forward_ios, size: 12, color: Colors.purple),
+                  ]),
+                ),
+              ],
+            );
+          }),
         ],
       ),
     );
@@ -530,7 +548,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
-// Draggable notes board widget
+// Draggable notes board widget with smooth animations
 class _DraggableNotesBoard extends StatefulWidget {
   final List<NoteModel> notes;
   final Function(NoteModel) onEdit;
@@ -543,7 +561,9 @@ class _DraggableNotesBoard extends StatefulWidget {
 }
 
 class _DraggableNotesBoardState extends State<_DraggableNotesBoard> {
+  static const double _noteW = 140, _noteH = 145, _boardH = 400;
   final Map<int, Offset> _positions = {};
+  int? _draggingNoteId;
 
   @override
   void initState() {
@@ -554,7 +574,6 @@ class _DraggableNotesBoardState extends State<_DraggableNotesBoard> {
   @override
   void didUpdateWidget(covariant _DraggableNotesBoard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Add positions for any new notes
     for (int i = 0; i < widget.notes.length; i++) {
       if (!_positions.containsKey(widget.notes[i].id)) {
         _positions[widget.notes[i].id] = Offset(
@@ -574,105 +593,122 @@ class _DraggableNotesBoardState extends State<_DraggableNotesBoard> {
     }
   }
 
-  int? _draggingNoteId;
+  Offset _clamp(Offset pos, double boardWidth) {
+    return Offset(
+      pos.dx.clamp(0, (boardWidth - _noteW).clamp(0, double.infinity)),
+      pos.dy.clamp(0, (_boardH - _noteH).clamp(0, double.infinity)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final isAdmin = CurrentUser.isAdmin;
-    final boardHeight = 400.0;
 
-    return GestureDetector(
-      onVerticalDragUpdate: (_) {},
-      child: Container(
-      height: boardHeight,
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border, style: BorderStyle.solid),
-      ),
-      child: Stack(
-        children: [
-          CustomPaint(painter: _DotsPainter(), size: Size.infinite),
-          ...widget.notes.map((note) {
-            final pos = _positions[note.id] ?? Offset.zero;
-            final noteColor = AppColors.noteColors[note.color] ?? AppColors.pastelYellow;
-            return Positioned(
-              left: pos.dx,
-              top: pos.dy,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onPanStart: (_) => _draggingNoteId = note.id,
-                onPanUpdate: (details) {
-                  setState(() {
-                    _positions[note.id] = Offset(
-                      (_positions[note.id]?.dx ?? 0) + details.delta.dx,
-                      (_positions[note.id]?.dy ?? 0) + details.delta.dy,
-                    );
-                  });
-                },
-                onPanEnd: (_) => _draggingNoteId = null,
-                onDoubleTap: () => widget.onEdit(note),
-                child: Container(
-                  width: 140,
-                  height: 145,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: noteColor,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 10, offset: const Offset(2, 3)),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header
-                      Row(children: [
-                        Container(
-                          width: 20, height: 20,
-                          decoration: BoxDecoration(color: AppColors.getAvatarColor(note.authorName), borderRadius: BorderRadius.circular(6)),
-                          alignment: Alignment.center,
-                          child: Text(Helpers.getInitials(note.authorName), style: const TextStyle(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w600)),
+    return LayoutBuilder(builder: (context, constraints) {
+      final boardWidth = constraints.maxWidth;
+      return GestureDetector(
+        onVerticalDragUpdate: (_) {},
+        child: Container(
+          height: _boardH,
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: Stack(
+            children: [
+              CustomPaint(painter: _DotsPainter(), size: Size.infinite),
+              ...widget.notes.map((note) {
+                final pos = _clamp(_positions[note.id] ?? Offset.zero, boardWidth);
+                final isDragging = _draggingNoteId == note.id;
+                final noteColor = AppColors.noteColors[note.color] ?? AppColors.pastelYellow;
+                return AnimatedPositioned(
+                  duration: isDragging ? Duration.zero : const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  left: pos.dx,
+                  top: pos.dy,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onPanStart: (_) => setState(() => _draggingNoteId = note.id),
+                    onPanUpdate: (details) {
+                      setState(() {
+                        final cur = _positions[note.id] ?? Offset.zero;
+                        _positions[note.id] = _clamp(
+                          Offset(cur.dx + details.delta.dx, cur.dy + details.delta.dy),
+                          boardWidth,
+                        );
+                      });
+                    },
+                    onPanEnd: (_) => setState(() => _draggingNoteId = null),
+                    onDoubleTap: () => widget.onEdit(note),
+                    child: AnimatedScale(
+                      scale: isDragging ? 1.06 : 1.0,
+                      duration: const Duration(milliseconds: 150),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        width: _noteW,
+                        height: _noteH,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: noteColor,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(isDragging ? 0.18 : 0.08),
+                              blurRadius: isDragging ? 18 : 10,
+                              offset: Offset(2, isDragging ? 6 : 3),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Expanded(child: Text(note.authorName, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),
-                        GestureDetector(
-                          onTap: () => widget.onEdit(note),
-                          child: const Icon(Icons.edit_outlined, size: 13, color: AppColors.textMuted),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(children: [
+                              Container(
+                                width: 20, height: 20,
+                                decoration: BoxDecoration(color: AppColors.getAvatarColor(note.authorName), borderRadius: BorderRadius.circular(6)),
+                                alignment: Alignment.center,
+                                child: Text(Helpers.getInitials(note.authorName), style: const TextStyle(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w600)),
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(child: Text(note.authorName, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),
+                              GestureDetector(
+                                onTap: () => widget.onEdit(note),
+                                child: const Icon(Icons.edit_outlined, size: 13, color: AppColors.textMuted),
+                              ),
+                              if (isAdmin) ...[
+                                const SizedBox(width: 3),
+                                GestureDetector(
+                                  onTap: () => widget.onDelete(note),
+                                  child: const Icon(Icons.close, size: 13, color: AppColors.error),
+                                ),
+                              ],
+                            ]),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: Text(note.content, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500), maxLines: 4, overflow: TextOverflow.ellipsis),
+                            ),
+                            Row(children: [
+                              const Icon(Icons.drag_indicator, size: 12, color: AppColors.textLight),
+                              const Spacer(),
+                              Text(Helpers.formatDateShort(note.createdAt), style: const TextStyle(fontSize: 8, color: AppColors.textMuted)),
+                            ]),
+                          ],
                         ),
-                        if (isAdmin) ...[
-                          const SizedBox(width: 3),
-                          GestureDetector(
-                            onTap: () => widget.onDelete(note),
-                            child: const Icon(Icons.close, size: 13, color: AppColors.error),
-                          ),
-                        ],
-                      ]),
-                      const SizedBox(height: 8),
-                      // Content
-                      Expanded(
-                        child: Text(note.content, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500), maxLines: 4, overflow: TextOverflow.ellipsis),
                       ),
-                      // Date
-                      Row(children: [
-                        const Icon(Icons.drag_indicator, size: 12, color: AppColors.textLight),
-                        const Spacer(),
-                        Text(Helpers.formatDateShort(note.createdAt), style: const TextStyle(fontSize: 8, color: AppColors.textMuted)),
-                      ]),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
-    ),
-    );
+                );
+              }),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
 
-// Subtle dot grid background
 class _DotsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

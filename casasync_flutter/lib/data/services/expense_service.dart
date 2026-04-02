@@ -40,18 +40,16 @@ class ExpenseService {
 
     await SupabaseDB.addSplits(splits);
 
-    // Create notifications for other members
-    for (var u in members) {
-      if (u['id'].toString() != userId) {
-        await SupabaseDB.addNotification({
-          'user_id': u['id'].toString(),
-          'title': 'New Expense',
-          'message': '$userName added "$title" - \u20B9${amount.toStringAsFixed(0)}',
-          'type': 'expense',
-          'is_read': false,
-        });
-      }
-    }
+    // Create notifications for other members (parallel)
+    await Future.wait(members.where((u) => u['id'].toString() != userId).map((u) =>
+      SupabaseDB.addNotification({
+        'user_id': u['id'].toString(),
+        'title': 'New Expense',
+        'message': '$userName added "$title" - \u20B9${amount.toStringAsFixed(0)}',
+        'type': 'expense',
+        'is_read': false,
+      }),
+    ));
 
     // Fetch the splits back for the model
     final fetchedSplits = await SupabaseDB.getSplits(expenseId);

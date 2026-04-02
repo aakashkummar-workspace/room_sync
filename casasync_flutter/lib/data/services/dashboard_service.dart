@@ -110,9 +110,9 @@ class DashboardService {
       'chore_score': choreScore,
       'inventory_count': inventory.length,
       'members_count': members.length,
-      'recent_notes': notes.take(5).toList(),
+      'recent_notes': notes,
       'notifications_count': notificationsCount,
-      'recent_notices': noticesList.reversed.take(2).toList(),
+      'recent_notices': noticesList.reversed.take(3).toList(),
       'active_polls': pollsList.where((p) => p['status'] == 'active').toList(),
     };
   }

@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/theme_provider.dart';
+import '../../../data/services/services.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/avatar_widget.dart';
 
@@ -16,12 +19,31 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool notifications = true;
-  bool darkMode = false;
+  Map<String, dynamic>? room;
+  bool loadingRoom = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRoom();
+  }
+
+  Future<void> _loadRoom() async {
+    try {
+      final roomId = CurrentUser.roomId;
+      if (roomId != null) {
+        room = await SupabaseDB.getRoom(roomId);
+      }
+    } catch (_) {}
+    if (mounted) setState(() => loadingRoom = false);
+  }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.valueOrNull;
+    final themeNotifier = ref.read(themeModeProvider.notifier);
+    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
 
     return ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
       const Text('Settings', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
@@ -43,6 +65,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ])),
       const SizedBox(height: 20),
 
+      // Room Settings (admin only)
+      if (CurrentUser.isAdmin && room != null) ...[
+        const Text('Room', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
+        const SizedBox(height: 10),
+        AppCard(padding: EdgeInsets.zero, child: Column(children: [
+          ListTile(
+            leading: const Icon(Icons.meeting_room_outlined, size: 20),
+            title: const Text('Room Name', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text(room?['name'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+              const SizedBox(width: 4),
+              const Icon(Icons.edit_outlined, size: 16, color: AppColors.textMuted),
+            ]),
+            onTap: () => _showEditRoom('name', room?['name'] ?? ''),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            leading: const Icon(Icons.vpn_key_outlined, size: 20),
+            title: const Text('Invite Code', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+            trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text(room?['invite_code'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1)),
+              const SizedBox(width: 4),
+              const Icon(Icons.edit_outlined, size: 16, color: AppColors.textMuted),
+            ]),
+            onTap: () => _showEditRoom('invite_code', room?['invite_code'] ?? ''),
+          ),
+        ])),
+        const SizedBox(height: 20),
+      ],
+
       // Preferences
       const Text('Preferences', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
       const SizedBox(height: 10),
@@ -58,8 +110,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         SwitchListTile(
           title: const Text('Dark Mode', style: TextStyle(fontSize: 14)),
           secondary: const Icon(Icons.dark_mode_outlined, size: 20),
-          value: darkMode,
-          onChanged: (v) => setState(() => darkMode = v),
+          value: isDark,
+          onChanged: (_) => themeNotifier.toggle(),
           activeColor: AppColors.primary,
         ),
       ])),
@@ -102,6 +154,48 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       const Spacer(),
       Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
     ]));
+  }
+
+  void _showEditRoom(String field, String currentValue) {
+    final ctrl = TextEditingController(text: currentValue);
+    final label = field == 'name' ? 'Room Name' : 'Invite Code';
+
+    showModalBottomSheet(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, builder: (_) => Container(
+      padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).viewInsets.bottom + 32),
+      decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
+        const SizedBox(height: 20),
+        Text('Edit $label', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 20),
+        TextField(
+          controller: ctrl,
+          textCapitalization: field == 'invite_code' ? TextCapitalization.characters : TextCapitalization.words,
+          decoration: InputDecoration(
+            labelText: label,
+            prefixIcon: Icon(field == 'name' ? Icons.meeting_room_outlined : Icons.vpn_key_outlined),
+          ),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(width: double.infinity, child: ElevatedButton(
+          onPressed: () async {
+            final val = ctrl.text.trim();
+            if (val.isEmpty) return;
+            try {
+              final roomId = CurrentUser.roomId;
+              if (roomId == null) return;
+              await SupabaseDB.updateRoom(roomId, {field: val});
+              setState(() => room?[field] = val);
+              if (mounted) Navigator.pop(context);
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$label updated')));
+            } catch (e) {
+              if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+            }
+          },
+          child: const Text('Save'),
+        )),
+      ]),
+    ));
   }
 
   void _showEditProfile(dynamic user) {
@@ -167,7 +261,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               final updates = <String, dynamic>{'name': nameCtrl.text, 'phone': phoneCtrl.text};
               if (newAvatarBase64 != null) updates['avatar_url'] = newAvatarBase64;
               await ref.read(authProvider.notifier).updateProfile(updates);
-              // Force refresh to pick up avatar change everywhere
               await ref.read(authProvider.notifier).refresh();
               if (context.mounted) Navigator.pop(context);
             },
