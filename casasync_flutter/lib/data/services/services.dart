@@ -12,3 +12,4 @@ export 'inventory_service.dart';
 export 'notification_service.dart';
 export 'house_rules_service.dart';
 export 'dashboard_service.dart';
+export 'local_notification_service.dart';

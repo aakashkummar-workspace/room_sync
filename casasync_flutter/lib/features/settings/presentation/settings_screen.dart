@@ -47,7 +47,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
       const Text('Settings', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-      const Text('Manage your preferences', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+      Text('Manage your preferences', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
       const SizedBox(height: 24),
 
       // Profile card
@@ -55,7 +55,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         AvatarWidget(name: user?.name ?? '?', avatarUrl: user?.avatarUrl, size: 72),
         const SizedBox(height: 12),
         Text(user?.name ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-        Text(user?.email ?? '', style: const TextStyle(fontSize: 13, color: AppColors.textMuted)),
+        Text(user?.email ?? '', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
         const SizedBox(height: 16),
         SizedBox(width: double.infinity, child: OutlinedButton(
           onPressed: () => _showEditProfile(user),
@@ -67,27 +67,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       // Room Settings (admin only)
       if (CurrentUser.isAdmin && room != null) ...[
-        const Text('Room', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
+        Text('Room', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
         const SizedBox(height: 10),
         AppCard(padding: EdgeInsets.zero, child: Column(children: [
           ListTile(
             leading: const Icon(Icons.meeting_room_outlined, size: 20),
-            title: const Text('Room Name', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+            title: Text('Room Name', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: [
               Text(room?['name'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
               const SizedBox(width: 4),
-              const Icon(Icons.edit_outlined, size: 16, color: AppColors.textMuted),
+              Icon(Icons.edit_outlined, size: 16, color: AppColors.textMuted),
             ]),
             onTap: () => _showEditRoom('name', room?['name'] ?? ''),
           ),
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.vpn_key_outlined, size: 20),
-            title: const Text('Invite Code', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+            title: Text('Invite Code', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
             trailing: Row(mainAxisSize: MainAxisSize.min, children: [
               Text(room?['invite_code'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1)),
               const SizedBox(width: 4),
-              const Icon(Icons.edit_outlined, size: 16, color: AppColors.textMuted),
+              Icon(Icons.edit_outlined, size: 16, color: AppColors.textMuted),
             ]),
             onTap: () => _showEditRoom('invite_code', room?['invite_code'] ?? ''),
           ),
@@ -96,7 +96,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ],
 
       // Preferences
-      const Text('Preferences', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
+      Text('Preferences', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
       const SizedBox(height: 10),
       AppCard(padding: EdgeInsets.zero, child: Column(children: [
         SwitchListTile(
@@ -118,7 +118,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       const SizedBox(height: 20),
 
       // Account
-      const Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
+      Text('Account', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textMuted)),
       const SizedBox(height: 10),
       AppCard(padding: EdgeInsets.zero, child: Column(children: [
         _infoRow('Name', user?.name ?? ''),
@@ -150,7 +150,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _infoRow(String label, String value) {
     return Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), child: Row(children: [
-      Text(label, style: const TextStyle(fontSize: 13, color: AppColors.textMuted)),
+      Text(label, style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
       const Spacer(),
       Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
     ]));

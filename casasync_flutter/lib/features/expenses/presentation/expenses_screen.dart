@@ -107,7 +107,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                 const SizedBox(width: 10),
                 Text(currentUserName ?? 'You', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                 const Spacer(),
-                const Text('You (Paid)', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                Text('You (Paid)', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
               ]),
             ),
 
@@ -211,7 +211,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
           // Header
           Row(
             children: [
-              const Expanded(child: Column(
+              Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Expenses', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
@@ -274,7 +274,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(e.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                                Text('${Helpers.formatDateShort(e.createdAt)} \u2022 Paid by ${iPayedThis ? "You" : e.paidByName}', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                                Text('${Helpers.formatDateShort(e.createdAt)} \u2022 Paid by ${iPayedThis ? "You" : e.paidByName}', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
                               ],
                             ),
                           ),
@@ -359,7 +359,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
             Icon(icon, size: 20, color: AppColors.textSecondary),
             const SizedBox(height: 8),
             Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-            Text(title, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+            Text(title, style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
           ],
         ),
       ),

@@ -53,7 +53,7 @@ class DashboardScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Hi $firstName', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700)),
-                    Text('$pendingChores tasks pending', style: const TextStyle(fontSize: 13, color: AppColors.textMuted)),
+                    Text('$pendingChores tasks pending', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
                   ],
                 ),
               ),
@@ -62,7 +62,11 @@ class DashboardScreen extends ConsumerWidget {
               _actionButton(context, Icons.add_task_rounded, 'Task', () => context.go('/chores'), filled: true),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+
+          // Join Requests (admin only)
+          if (CurrentUser.isAdmin && roomId != null)
+            _JoinRequestsSection(roomId: roomId as int, onChanged: () => ref.invalidate(dashboardProvider)),
 
           // Categories
           const Text('Categories', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
@@ -93,7 +97,7 @@ class DashboardScreen extends ConsumerWidget {
                       const Icon(Icons.trending_up, color: Colors.orange, size: 20),
                       const SizedBox(height: 8),
                       Text(Helpers.formatCurrency(totalExpenses), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-                      const Text('Total Spent', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                      Text('Total Spent', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
                     ],
                   ),
                 ),
@@ -109,7 +113,7 @@ class DashboardScreen extends ConsumerWidget {
                       const Icon(Icons.pie_chart_outline, color: Colors.green, size: 20),
                       const SizedBox(height: 8),
                       Text('$choreScore%', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-                      const Text('Chore Score', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                      Text('Chore Score', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
                     ],
                   ),
                 ),
@@ -148,7 +152,7 @@ class DashboardScreen extends ConsumerWidget {
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Icon(Icons.sticky_note_2_outlined, size: 40, color: AppColors.textLight),
                   const SizedBox(height: 10),
-                  const Text('No sticky notes yet', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
+                  Text('No sticky notes yet', style: TextStyle(color: AppColors.textMuted, fontSize: 13)),
                 ]),
               ),
             )
@@ -183,7 +187,7 @@ class DashboardScreen extends ConsumerWidget {
                 ]),
                 const SizedBox(height: 10),
                 if (notices.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text('No notices yet', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                   )
@@ -203,10 +207,10 @@ class DashboardScreen extends ConsumerWidget {
                           children: [
                             Text(n['title'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
                             if (n['body'] != null && (n['body'] as String).isNotEmpty)
-                              Text(n['body'], style: const TextStyle(fontSize: 11, color: AppColors.textMuted), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              Text(n['body'], style: TextStyle(fontSize: 11, color: AppColors.textMuted), maxLines: 1, overflow: TextOverflow.ellipsis),
                           ],
                         )),
-                        Text(n['author'] ?? '', style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                        Text(n['author'] ?? '', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
                       ]),
                     ),
                   )),
@@ -243,7 +247,7 @@ class DashboardScreen extends ConsumerWidget {
                 ]),
                 const SizedBox(height: 10),
                 if (polls.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 12),
                     child: Text('No active polls', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                   )
@@ -257,7 +261,7 @@ class DashboardScreen extends ConsumerWidget {
                         const Icon(Icons.how_to_vote_outlined, size: 16, color: Colors.purple),
                         const SizedBox(width: 8),
                         Expanded(child: Text(p['question'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                        Text(p['author'] ?? '', style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                        Text(p['author'] ?? '', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
                       ]),
                     ),
                   )),
@@ -296,7 +300,7 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             Text('Welcome, $userName!', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
             const SizedBox(height: 8),
-            const Text('Get started by creating a room or joining one', style: TextStyle(fontSize: 13, color: AppColors.textMuted), textAlign: TextAlign.center),
+            Text('Get started by creating a room or joining one', style: TextStyle(fontSize: 13, color: AppColors.textMuted), textAlign: TextAlign.center),
             const SizedBox(height: 32),
 
             // Create Room
@@ -310,7 +314,7 @@ class DashboardScreen extends ConsumerWidget {
                   Text('Create a Room', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                 ]),
                 const SizedBox(height: 6),
-                const Text('Start your own hostel room and invite roommates', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                Text('Start your own hostel room and invite roommates', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                 const SizedBox(height: 16),
                 StatefulBuilder(builder: (ctx, setLocalState) {
                   return Column(children: [
@@ -347,7 +351,7 @@ class DashboardScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            const Row(children: [
+            Row(children: [
               Expanded(child: Divider()),
               Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: Text('OR', style: TextStyle(fontSize: 12, color: AppColors.textMuted, fontWeight: FontWeight.w600))),
               Expanded(child: Divider()),
@@ -365,7 +369,7 @@ class DashboardScreen extends ConsumerWidget {
                   Text('Join a Room', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                 ]),
                 const SizedBox(height: 6),
-                const Text('Enter an invite code from your roommate', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                Text('Enter an invite code from your roommate', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
                 const SizedBox(height: 16),
                 StatefulBuilder(builder: (ctx, setLocalState) {
                   return Column(children: [
@@ -445,7 +449,7 @@ class DashboardScreen extends ConsumerWidget {
               Icon(icon, size: 22, color: AppColors.textSecondary),
               const SizedBox(height: 10),
               Text(title, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600), overflow: TextOverflow.ellipsis),
-              Text(subtitle, style: const TextStyle(fontSize: 9, color: AppColors.textMuted), overflow: TextOverflow.ellipsis),
+              Text(subtitle, style: TextStyle(fontSize: 9, color: AppColors.textMuted), overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
@@ -606,9 +610,7 @@ class _DraggableNotesBoardState extends State<_DraggableNotesBoard> {
 
     return LayoutBuilder(builder: (context, constraints) {
       final boardWidth = constraints.maxWidth;
-      return GestureDetector(
-        onVerticalDragUpdate: (_) {},
-        child: Container(
+      return Container(
           height: _boardH,
           decoration: BoxDecoration(
             color: AppColors.background,
@@ -673,26 +675,47 @@ class _DraggableNotesBoardState extends State<_DraggableNotesBoard> {
                               ),
                               const SizedBox(width: 4),
                               Expanded(child: Text(note.authorName, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),
-                              GestureDetector(
-                                onTap: () => widget.onEdit(note),
-                                child: const Icon(Icons.edit_outlined, size: 13, color: AppColors.textMuted),
+                              // Edit button with proper touch target
+                              SizedBox(
+                                width: 28, height: 28,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () => widget.onEdit(note),
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), borderRadius: BorderRadius.circular(6)),
+                                    child: const Icon(Icons.edit_outlined, size: 12, color: AppColors.secondary),
+                                  ),
+                                ),
                               ),
                               if (isAdmin) ...[
-                                const SizedBox(width: 3),
-                                GestureDetector(
-                                  onTap: () => widget.onDelete(note),
-                                  child: const Icon(Icons.close, size: 13, color: AppColors.error),
+                                const SizedBox(width: 2),
+                                SizedBox(
+                                  width: 28, height: 28,
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    onPressed: () => widget.onDelete(note),
+                                    icon: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(color: AppColors.error.withOpacity(0.15), borderRadius: BorderRadius.circular(6)),
+                                      child: const Icon(Icons.delete_outline, size: 12, color: AppColors.error),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ]),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
                             Expanded(
                               child: Text(note.content, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500), maxLines: 4, overflow: TextOverflow.ellipsis),
                             ),
                             Row(children: [
-                              const Icon(Icons.drag_indicator, size: 12, color: AppColors.textLight),
+                              Icon(Icons.open_with, size: 11, color: AppColors.textLight),
+                              const SizedBox(width: 4),
+                              Text('Drag', style: TextStyle(fontSize: 8, color: AppColors.textLight)),
                               const Spacer(),
-                              Text(Helpers.formatDateShort(note.createdAt), style: const TextStyle(fontSize: 8, color: AppColors.textMuted)),
+                              Text(Helpers.formatDateShort(note.createdAt), style: TextStyle(fontSize: 8, color: AppColors.textMuted)),
                             ]),
                           ],
                         ),
@@ -703,9 +726,122 @@ class _DraggableNotesBoardState extends State<_DraggableNotesBoard> {
               }),
             ],
           ),
-        ),
-      );
+        );
     });
+  }
+}
+
+// ─── JOIN REQUESTS SECTION (Admin Only) ───
+class _JoinRequestsSection extends StatefulWidget {
+  final int roomId;
+  final VoidCallback onChanged;
+  const _JoinRequestsSection({required this.roomId, required this.onChanged});
+
+  @override
+  State<_JoinRequestsSection> createState() => _JoinRequestsSectionState();
+}
+
+class _JoinRequestsSectionState extends State<_JoinRequestsSection> {
+  List<Map<String, dynamic>> _requests = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      _requests = await SupabaseDB.getJoinRequests(widget.roomId);
+    } catch (_) {}
+    if (mounted) setState(() => _loading = false);
+  }
+
+  Future<void> _approve(Map<String, dynamic> request) async {
+    try {
+      await SupabaseDB.updateJoinRequestStatus(request['id'] as int, 'approved');
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${request['name']} approved')));
+      _load();
+      widget.onChanged();
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  Future<void> _reject(Map<String, dynamic> request) async {
+    try {
+      await SupabaseDB.updateJoinRequestStatus(request['id'] as int, 'rejected');
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${request['name']} rejected')));
+      _load();
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading || _requests.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          Icon(Icons.person_add_alt_1, size: 20, color: AppColors.warning),
+          const SizedBox(width: 8),
+          const Expanded(child: Text('Join Requests', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(color: AppColors.pastelOrange, borderRadius: BorderRadius.circular(8)),
+            child: Text('${_requests.length}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.orange)),
+          ),
+        ]),
+        const SizedBox(height: 10),
+        ..._requests.map((r) => Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.pastelOrange,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.orange.withOpacity(0.2)),
+          ),
+          child: Row(children: [
+            Container(
+              width: 40, height: 40,
+              decoration: BoxDecoration(color: AppColors.getAvatarColor(r['name'] ?? 'U'), borderRadius: BorderRadius.circular(12)),
+              alignment: Alignment.center,
+              child: Text(Helpers.getInitials(r['name'] ?? 'U'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 14)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(r['name'] ?? '', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+              Text(r['email'] ?? '', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+              if (r['created_at'] != null)
+                Text(Helpers.timeAgo(DateTime.parse(r['created_at'])), style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+            ])),
+            // Approve
+            IconButton(
+              onPressed: () => _approve(r),
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(color: AppColors.success.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.check, size: 18, color: AppColors.success),
+              ),
+            ),
+            // Reject
+            IconButton(
+              onPressed: () => _reject(r),
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(color: AppColors.error.withOpacity(0.15), borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.close, size: 18, color: AppColors.error),
+              ),
+            ),
+          ]),
+        )),
+        const SizedBox(height: 8),
+      ],
+    );
   }
 }
 

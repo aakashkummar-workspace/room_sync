@@ -33,10 +33,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       final authState = ref.read(authProvider);
       final isLoggedIn = authState.valueOrNull != null;
       final isLoading = authState.isLoading;
+      final hasError = authState.hasError;
       final isLoginPage = state.matchedLocation == '/login';
 
       // While loading, don't redirect — stay where we are
       if (isLoading) return null;
+
+      // On error, send to login
+      if (hasError && !isLoginPage) return '/login';
 
       if (!isLoggedIn && !isLoginPage) return '/login';
       if (isLoggedIn && isLoginPage) return '/';

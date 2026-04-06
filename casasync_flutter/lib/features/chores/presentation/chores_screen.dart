@@ -113,7 +113,7 @@ class _ChoresScreenState extends ConsumerState<ChoresScreen> {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
         children: [
           Row(children: [
-            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Chores', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
               Text('Manage household tasks', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
             ])),
@@ -177,7 +177,7 @@ class _ChoresScreenState extends ConsumerState<ChoresScreen> {
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(chore.title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, decoration: isPending ? null : TextDecoration.lineThrough, color: isPending ? null : AppColors.textMuted)),
-                Text('${chore.assignedToName} \u2022 ${Helpers.formatDateShort(chore.dueDate)}', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                Text('${chore.assignedToName} \u2022 ${Helpers.formatDateShort(chore.dueDate)}', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
               ]),
             ),
             if (isPending)
@@ -197,7 +197,7 @@ class _ChoresScreenState extends ConsumerState<ChoresScreen> {
 
   Widget _statCard(String title, String value, Color color) {
     return Expanded(child: AppCard(color: color, child: Column(children: [
-      Text(title, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+      Text(title, style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
       const SizedBox(height: 4),
       Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
     ])));

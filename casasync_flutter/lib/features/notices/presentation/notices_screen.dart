@@ -129,7 +129,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         child: Row(children: [
-          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Notices', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
             Text('Announcements & polls', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
           ])),
@@ -152,14 +152,18 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
       // Tabs
       Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(color: AppColors.inputBg, borderRadius: BorderRadius.circular(14)),
         child: TabBar(
           controller: _tabCtrl,
           onTap: (_) => setState(() {}),
-          indicator: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(12)),
+          indicator: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
+          indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
           labelColor: Colors.white,
           unselectedLabelColor: AppColors.textMuted,
           labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          unselectedLabelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
           tabs: [
             Tab(text: 'Notices (${notices.length})'),
             Tab(text: 'Polls (${polls.length})'),
@@ -199,13 +203,13 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
                                   ),
                                 ]),
                                 const SizedBox(height: 6),
-                                Text(n['body'] ?? '', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                                Text(n['body'] ?? '', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                                 const SizedBox(height: 8),
                                 Row(children: [
-                                  Text('By ${n['author']}', style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                                  Text('By ${n['author']}', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
                                   const Spacer(),
                                   if (n['created_at'] != null)
-                                    Text(Helpers.timeAgo(DateTime.parse(n['created_at'])), style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                                    Text(Helpers.timeAgo(DateTime.parse(n['created_at'])), style: TextStyle(fontSize: 10, color: AppColors.textLight)),
                                   if (isAdmin) ...[
                                     const SizedBox(width: 8),
                                     GestureDetector(
@@ -253,7 +257,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
                                 ),
                               ]),
                               const SizedBox(height: 4),
-                              Text('By ${p['author']} \u2022 $totalVotes votes', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                              Text('By ${p['author']} \u2022 $totalVotes votes', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
                               const SizedBox(height: 14),
 
                               ...options.asMap().entries.map((entry) {
@@ -265,7 +269,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
                                 final myVote = votes.contains(currentUserId);
 
                                 return GestureDetector(
-                                  onTap: (isClosed || hasVoted) ? null : () async {
+                                  onTap: isClosed ? null : () async {
                                     await _service.vote(p['id'], optIdx);
                                     _loadData();
                                   },
@@ -284,7 +288,7 @@ class _NoticesScreenState extends ConsumerState<NoticesScreen> with SingleTicker
                                           Expanded(child: Text(opt['text'] ?? '', style: TextStyle(fontSize: 13, fontWeight: myVote ? FontWeight.w600 : FontWeight.w400))),
                                           Text('$voteCount', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                                           const SizedBox(width: 4),
-                                          Text('(${(pct * 100).toInt()}%)', style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                                          Text('(${(pct * 100).toInt()}%)', style: TextStyle(fontSize: 10, color: AppColors.textMuted)),
                                         ]),
                                         const SizedBox(height: 4),
                                         ClipRRect(

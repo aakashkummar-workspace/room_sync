@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
@@ -7,6 +8,7 @@ import '../../core/utils/helpers.dart';
 import '../../data/models/models.dart';
 import '../../providers/auth_provider.dart';
 import '../../data/services/services.dart';
+import '../../data/services/local_notification_service.dart';
 import 'avatar_widget.dart';
 
 class MainLayout extends ConsumerStatefulWidget {
@@ -54,6 +56,11 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
   Future<void> _loadNotifications() async {
     _unreadCount = await NotificationService().getUnreadCount();
     _notifications = await NotificationService().getNotifications();
+    // Show real notification in system bar if new ones appeared
+    if (_notifications.isNotEmpty) {
+      final latest = _notifications.first;
+      await LocalNotificationService.showIfNew(_unreadCount, latest.title, latest.message);
+    }
     if (mounted) setState(() {});
   }
 
@@ -64,14 +71,14 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.6),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(margin: const EdgeInsets.only(top: 12), width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
+            Container(margin: EdgeInsets.only(top: 12), width: 40, height: 4, decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(2))),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
               child: Row(children: [
@@ -91,7 +98,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
             const Divider(height: 1),
             Flexible(
               child: _notifications.isEmpty
-                  ? const Padding(
+                  ? Padding(
                       padding: EdgeInsets.all(40),
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
                         Icon(Icons.notifications_none, size: 48, color: AppColors.textLight),
@@ -115,8 +122,8 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
                             child: Icon(icon, size: 18, color: iconColor),
                           ),
                           title: Text(n.title, style: TextStyle(fontSize: 13, fontWeight: n.isRead ? FontWeight.w400 : FontWeight.w600)),
-                          subtitle: Text(n.message, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
-                          trailing: Text(Helpers.timeAgo(n.createdAt), style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                          subtitle: Text(n.message, style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                          trailing: Text(Helpers.timeAgo(n.createdAt), style: TextStyle(fontSize: 10, color: AppColors.textLight)),
                           dense: true,
                           tileColor: n.isRead ? null : AppColors.pastelTeal.withOpacity(0.3),
                         );
@@ -151,7 +158,32 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
     _updateIndex(context);
     final user = ref.watch(authProvider).valueOrNull;
 
-    return Scaffold(
+    final isOnDashboard = GoRouterState.of(context).matchedLocation == '/';
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        if (!isOnDashboard) {
+          context.go('/');
+          return;
+        }
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Exit App'),
+            content: const Text('Do you want to exit the app?'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+              TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Exit', style: TextStyle(color: AppColors.error))),
+            ],
+          ),
+        );
+        if (shouldExit == true && context.mounted) {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
@@ -203,7 +235,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       // Bottom Nav
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border)),
           boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2))],
         ),
@@ -230,15 +262,7 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
         ),
       ),
 
-      floatingActionButton: GoRouterState.of(context).matchedLocation == '/messages'
-        ? null
-        : FloatingActionButton(
-            mini: true,
-            backgroundColor: AppColors.secondary,
-            onPressed: () => context.go('/messages'),
-            child: const Icon(Icons.chat_bubble_outline, size: 18, color: Colors.white),
-          ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+    ),
     );
   }
 
@@ -280,9 +304,9 @@ class _MainLayoutState extends ConsumerState<MainLayout> {
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

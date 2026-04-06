@@ -65,7 +65,7 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
         constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
-        decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(color: AppColors.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
           child: Column(children: [
@@ -89,7 +89,7 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
                     Text(member['name'] ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
                     if (isMe) ...[const SizedBox(width: 8), Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: Colors.white.withOpacity(0.7), borderRadius: BorderRadius.circular(6)), child: const Text('You', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600)))],
                   ]),
-                  Text(member['role'] == 'admin' ? '\u2B50 Admin' : 'Teammate', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  Text(member['role'] == 'admin' ? '\u2B50 Admin' : 'Teammate', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
                 ])),
               ]),
             ),
@@ -122,25 +122,25 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
                     const SizedBox(height: 14),
                     // Email
                     Row(children: [
-                      const SizedBox(width: 70, child: Text('Email', style: TextStyle(fontSize: 12, color: AppColors.textMuted))),
+                      SizedBox(width: 70, child: Text('Email', style: TextStyle(fontSize: 12, color: AppColors.textMuted))),
                       Expanded(child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-                        child: Text(cred!['email'] ?? '', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                        decoration: BoxDecoration(color: AppColors.inputBg, borderRadius: BorderRadius.circular(8)),
+                        child: Text(cred!['email'] ?? '', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
                       )),
                     ]),
                     const SizedBox(height: 8),
                     // Password
                     Row(children: [
-                      const SizedBox(width: 70, child: Text('Password', style: TextStyle(fontSize: 12, color: AppColors.textMuted))),
+                      SizedBox(width: 70, child: Text('Password', style: TextStyle(fontSize: 12, color: AppColors.textMuted))),
                       Expanded(child: StatefulBuilder(builder: (ctx2, setPwdState) {
                         return GestureDetector(
                           onTap: () => setPwdState(() => showPwd = !showPwd),
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(color: AppColors.inputBg, borderRadius: BorderRadius.circular(8)),
                             child: Row(children: [
-                              Expanded(child: Text(showPwd ? (cred!['password'] ?? '') : '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, fontFamily: 'monospace'))),
+                              Expanded(child: Text(showPwd ? (cred!['password'] ?? '') : '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, fontFamily: 'monospace', color: AppColors.textPrimary))),
                               Icon(showPwd ? Icons.visibility_off : Icons.visibility, size: 16, color: AppColors.textMuted),
                             ]),
                           ),
@@ -171,9 +171,28 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
             if (isAdmin && !isMe) ...[
               const SizedBox(height: 20),
               SizedBox(width: double.infinity, child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // TODO: implement remove member
+                onPressed: () async {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Remove Member'),
+                      content: Text('Remove ${member['name']} from this room?'),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                        TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Remove', style: TextStyle(color: AppColors.error))),
+                      ],
+                    ),
+                  );
+                  if (confirmed == true) {
+                    try {
+                      await SupabaseDB.removeMember(member['id'].toString());
+                      if (mounted) Navigator.pop(context);
+                      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${member['name']} removed')));
+                      _loadData();
+                    } catch (e) {
+                      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                    }
+                  }
                 },
                 icon: const Icon(Icons.person_remove, size: 16),
                 label: const Text('Remove from Room'),
@@ -196,7 +215,7 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
           child: Icon(icon, size: 16, color: AppColors.textMuted),
         ),
         const SizedBox(width: 12),
-        SizedBox(width: 60, child: Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textMuted))),
+        SizedBox(width: 60, child: Text(label, style: TextStyle(fontSize: 12, color: AppColors.textMuted))),
         Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500))),
       ]),
     );
@@ -211,13 +230,13 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
       onRefresh: () async { setState(() => loading = true); await _loadData(); },
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
         const Text('Roommates', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-        const Text('Manage your household members', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+        Text('Manage your household members', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
         const SizedBox(height: 16),
 
         // Invite code
         AppCard(color: AppColors.pastelTeal, child: Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Invite Code', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+            Text('Invite Code', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
             Text(inviteCode, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.primary)),
           ])),
           IconButton(
@@ -256,15 +275,15 @@ class _RoommatesScreenState extends ConsumerState<RoommatesScreen> {
               ]),
               const SizedBox(height: 12),
               Row(children: [
-                const Icon(Icons.mail_outline, size: 14, color: AppColors.textMuted),
+                Icon(Icons.mail_outline, size: 14, color: AppColors.textMuted),
                 const SizedBox(width: 6),
-                Text(m['email'] ?? '', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                Text(m['email'] ?? '', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
               ]),
               const SizedBox(height: 6),
               Row(children: [
-                const Icon(Icons.phone_outlined, size: 14, color: AppColors.textMuted),
+                Icon(Icons.phone_outlined, size: 14, color: AppColors.textMuted),
                 const SizedBox(width: 6),
-                Text(m['phone'] ?? 'Not added', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                Text(m['phone'] ?? 'Not added', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
               ]),
             ],
           ))));

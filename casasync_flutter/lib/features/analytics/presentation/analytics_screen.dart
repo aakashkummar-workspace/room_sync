@@ -38,7 +38,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
       onRefresh: () async { setState(() => loading = true); await _loadData(); },
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
       const Text('Analytics', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-      const Text('Spending insights', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
+      Text('Spending insights', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
       const SizedBox(height: 20),
 
       // Stats
@@ -53,7 +53,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
       const Text('Spending by Category', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
       const SizedBox(height: 12),
       if (categories.isEmpty)
-        const Center(child: Padding(padding: EdgeInsets.all(40), child: Text('No data yet', style: TextStyle(color: AppColors.textMuted))))
+        Center(child: Padding(padding: EdgeInsets.all(40), child: Text('No data yet', style: TextStyle(color: AppColors.textMuted))))
       else
         ...categories.entries.map((e) {
           final pct = total > 0 ? (e.value / total) : 0.0;
@@ -85,6 +85,6 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     Icon(ic, size: 20, color: AppColors.textSecondary),
     const SizedBox(height: 8),
     Text(v, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis),
-    Text(t, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+    Text(t, style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
   ])));
 }

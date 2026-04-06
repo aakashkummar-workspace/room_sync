@@ -17,6 +17,7 @@ class CurrentUser {
 /// All data goes to Supabase — no local mock storage.
 class SupabaseDB {
   static SupabaseClient get _client => Supabase.instance.client;
+  static SupabaseClient get client => _client;
   static String? get currentUserId => _client.auth.currentUser?.id;
 
   // ─── AUTH ───
@@ -89,6 +90,10 @@ class SupabaseDB {
 
   static Future<void> updateRoom(int roomId, Map<String, dynamic> data) async {
     await _client.from('rooms').update(data).eq('id', roomId);
+  }
+
+  static Future<void> removeMember(String userId) async {
+    await _client.from('profiles').update({'room_id': null, 'role': 'member'}).eq('id', userId);
   }
 
   static Future<List<Map<String, dynamic>>> getRoomMembers(int roomId) async {
@@ -193,6 +198,26 @@ class SupabaseDB {
     await _client.from('messages').delete().eq('id', id);
   }
 
+  // ─── DIRECT MESSAGES ───
+  static Future<Map<String, dynamic>> sendDM(Map<String, dynamic> msg) async {
+    return await _client.from('direct_messages').insert(msg).select().single();
+  }
+
+  static Future<List<Map<String, dynamic>>> getDMs(String user1, String user2) async {
+    // Get messages where sender/receiver matches either direction
+    final msgs = await _client.from('direct_messages').select()
+        .or('and(sender_id.eq.$user1,receiver_id.eq.$user2),and(sender_id.eq.$user2,receiver_id.eq.$user1)')
+        .order('created_at');
+    return msgs;
+  }
+
+  static Future<List<Map<String, dynamic>>> getDMConversations(String userId) async {
+    // Get latest message per conversation partner
+    final sent = await _client.from('direct_messages').select().eq('sender_id', userId).order('created_at', ascending: false);
+    final received = await _client.from('direct_messages').select().eq('receiver_id', userId).order('created_at', ascending: false);
+    return [...sent, ...received];
+  }
+
   // ─── HOUSE RULES ───
   static Future<Map<String, dynamic>> addRule(Map<String, dynamic> rule) async {
     return await _client.from('house_rules').insert(rule).select().single();
@@ -278,6 +303,32 @@ class SupabaseDB {
 
   static Future<void> deletePoll(int id) async {
     await _client.from('polls').delete().eq('id', id);
+  }
+
+  // ─── JOIN REQUESTS ───
+  static Future<Map<String, dynamic>> createJoinRequest(Map<String, dynamic> data) async {
+    return await _client.from('join_requests').insert(data).select().single();
+  }
+
+  static Future<List<Map<String, dynamic>>> getJoinRequests(int roomId) async {
+    return await _client.from('join_requests').select().eq('room_id', roomId).eq('status', 'pending').order('created_at', ascending: false);
+  }
+
+  static Future<void> updateJoinRequestStatus(int requestId, String status) async {
+    await _client.from('join_requests').update({'status': status}).eq('id', requestId);
+  }
+
+  static Future<Map<String, dynamic>?> getJoinRequestByEmail(String email, int roomId) async {
+    final results = await _client.from('join_requests').select().eq('email', email).eq('room_id', roomId).order('created_at', ascending: false).limit(1);
+    return results.isNotEmpty ? results.first : null;
+  }
+
+  static Future<List<Map<String, dynamic>>> getMyJoinRequests(String email) async {
+    return await _client.from('join_requests').select().eq('email', email).order('created_at', ascending: false);
+  }
+
+  static Stream<List<Map<String, dynamic>>> listenJoinRequests(int roomId) {
+    return _client.from('join_requests').stream(primaryKey: ['id']).eq('room_id', roomId);
   }
 
   // ─── STORAGE ───

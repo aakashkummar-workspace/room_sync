@@ -255,3 +255,49 @@ CREATE POLICY "Anyone can view message files" ON storage.objects FOR SELECT USIN
 
 -- Enable realtime for messages
 ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+
+-- =============================================
+-- 14. Direct Messages (Private DMs)
+-- =============================================
+CREATE TABLE IF NOT EXISTS direct_messages (
+  id SERIAL PRIMARY KEY,
+  sender_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  sender_name TEXT NOT NULL,
+  receiver_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  receiver_name TEXT NOT NULL,
+  content TEXT NOT NULL,
+  room_id INTEGER REFERENCES rooms(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE direct_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own DMs" ON direct_messages FOR SELECT USING (sender_id = auth.uid() OR receiver_id = auth.uid());
+CREATE POLICY "Users can send DMs" ON direct_messages FOR INSERT WITH CHECK (sender_id = auth.uid());
+CREATE POLICY "Users can delete own DMs" ON direct_messages FOR DELETE USING (sender_id = auth.uid());
+
+-- =============================================
+-- 15. Join Requests
+-- =============================================
+CREATE TABLE IF NOT EXISTS join_requests (
+  id SERIAL PRIMARY KEY,
+  room_id INTEGER REFERENCES rooms(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  status TEXT DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE join_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can create join requests" ON join_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Room admins can view join requests" ON join_requests FOR SELECT USING (
+  room_id IN (SELECT room_id FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  OR email = (SELECT email FROM profiles WHERE id = auth.uid())
+);
+CREATE POLICY "Room admins can update join requests" ON join_requests FOR UPDATE USING (
+  room_id IN (SELECT room_id FROM profiles WHERE id = auth.uid() AND role = 'admin')
+);
+CREATE POLICY "Anyone can view own requests by email" ON join_requests FOR SELECT USING (true);
+
+ALTER PUBLICATION supabase_realtime ADD TABLE join_requests;

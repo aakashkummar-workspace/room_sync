@@ -65,7 +65,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       onRefresh: () async { setState(() => loading = true); await _loadData(); },
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
         Row(children: [
-          const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Inventory', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
             Text('Track shared supplies', style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
           ])),
@@ -84,7 +84,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
           const EmptyState(icon: Icons.inventory_2_outlined, title: 'No items yet')
         else
           ...items.map((item) => Padding(padding: const EdgeInsets.only(bottom: 10), child: AppCard(child: Row(children: [
-            Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.pastelTeal, borderRadius: BorderRadius.circular(12)),
+            Container(padding: EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.pastelTeal, borderRadius: BorderRadius.circular(12)),
               child: const Icon(Icons.inventory_2, size: 18, color: AppColors.primary)),
             const SizedBox(width: 12),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -110,7 +110,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   }
 
   Widget _stat(String t, String v, Color c) => Expanded(child: AppCard(color: c, child: Column(children: [
-    Text(t, style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+    Text(t, style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
     const SizedBox(height: 4),
     Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
   ])));

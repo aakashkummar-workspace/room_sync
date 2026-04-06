@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/theme/app_colors.dart';
+import 'data/services/local_notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/theme_provider.dart';
 import 'router/app_router.dart';
@@ -22,6 +24,9 @@ void main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0b2ZmdW14emxoeXVuZG1mYXBjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU1MTcwMTgsImV4cCI6MjA4MTA5MzAxOH0.cU34sLRqfn5fPyEiK8HmNALJ1pCHKpiCkNkcetGzz4M',
   );
 
+  // Initialize local notifications
+  await LocalNotificationService.init();
+
   runApp(const ProviderScope(child: CasaSyncApp()));
 }
 
@@ -32,6 +37,7 @@ class CasaSyncApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(themeModeProvider);
+    AppColors.setDark(themeMode == ThemeMode.dark);
 
     return MaterialApp.router(
       title: 'CasaSync',

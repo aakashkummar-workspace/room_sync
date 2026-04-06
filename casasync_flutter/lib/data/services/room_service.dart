@@ -16,8 +16,8 @@ class RoomService {
     };
   }
 
-  Future<RoomModel> createRoom(String name) async {
-    final code = Helpers.generateInviteCode(name);
+  Future<RoomModel> createRoom(String name, {String? code}) async {
+    code ??= Helpers.generateInviteCode(name);
     final room = await SupabaseDB.createRoom(name, code);
 
     // Refresh the current user profile (room_id was updated)
